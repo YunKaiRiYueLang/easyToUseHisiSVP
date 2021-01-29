@@ -1,0 +1,2 @@
+# easyToUseHisiSVP
+为了方便自己使用海思svp而建立的仓库
