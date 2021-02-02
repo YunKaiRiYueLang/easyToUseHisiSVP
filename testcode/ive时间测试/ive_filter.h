@@ -33,6 +33,7 @@ void FilterSample(IVE_IMAGE_TYPE_E enType, HI_S8 *ps8Mask, HI_U8 u8Norm, HI_CHAR
     memset(&stSrc, 0, sizeof(IVE_SRC_IMAGE_S)); // 置'0';
     memset(&stDst, 0, sizeof(IVE_DST_IMAGE_S));
     memset(&stCtrl, 0, sizeof(IVE_FILTER_CTRL_S));
+    
     stbImageData img;
     if (!readGrayBmpImage(fileName, img))
     {
@@ -54,6 +55,13 @@ void FilterSample(IVE_IMAGE_TYPE_E enType, HI_S8 *ps8Mask, HI_U8 u8Norm, HI_CHAR
         return;
     }
 
+    //植入图像数据到ive结构体指向的内存
+    unsigned char *p=(unsigned char*)stSrc.au64VirAddr[0];
+    for (int i = 0; i < stSrc.u32Height;i++){
+        memcpy(p + stSrc.au32Stride[0] * i, img.data+i*img.w, img.w);
+    }
+
+
     memcpy(stCtrl.as8Mask, ps8Mask, sizeof(HI_S8) * 25);
     stCtrl.u8Norm = u8Norm;
 
@@ -62,6 +70,11 @@ void FilterSample(IVE_IMAGE_TYPE_E enType, HI_S8 *ps8Mask, HI_U8 u8Norm, HI_CHAR
     double dTime = (HI_DOUBLE)HI_GetTickCount();
     // for (int i = 0; i < 1000;i++){
      s32Result = HI_MPI_IVE_Filter(&handle, &stSrc, &stDst, &stCtrl, HI_TRUE);
+    if (0 != s32Result)
+    {
+        printf("HI_MPI_IVE_Filter错误: %x\n",s32Result);
+        return;
+    }
     HI_BOOL finish;
     HI_BOOL block = HI_TRUE;
     do

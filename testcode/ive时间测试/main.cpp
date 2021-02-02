@@ -33,6 +33,7 @@ using std::string;
 #include<unistd.h>
 
 #include"ive_filter.h"
+#include"ive_thresh.h"
 
 #include"hisiImage.h"
 
@@ -61,7 +62,10 @@ int main(int argc, char *argv[])
         break;
     case '2':
         ive_filter();
-
+        break;
+    case '3':
+        ive_thresh();
+        break;
     default:
         break;
     }
@@ -88,7 +92,7 @@ void stdReadWriteImage()
     int width_resize = x;
     int height_resize = y;
     unsigned char *outputPixel = data;
-    int ret = stbi_write_png(storeFilePath.c_str(), width_resize, height_resize, desired_channels, outputPixel, 0);
+    int ret = stbi_write_bmp(storeFilePath.c_str(), width_resize, height_resize, desired_channels, outputPixel);
     if (ret == 0)
     {
         fprintf(stderr, "fail to write image png: %s\n", storeFilePath.c_str());
