@@ -11,7 +11,6 @@ CV_EXPORTS_W void Sobel( InputArray src, OutputArray dst, int ddepth,
 #include "hi_ive.h"
 #include "mpi_ive.h"
 
-
 #include "sample_assist.h"
 #include "sample_define.h"
 
@@ -28,15 +27,15 @@ using std::string;
 
 #include "readimage.h"
 
-#include"hi_comm_sys.h"
-#include"mpi_sys.h"
-#include<unistd.h>
+#include "hi_comm_sys.h"
+#include "mpi_sys.h"
+#include <unistd.h>
 
-#include"ive_filter.h"
-#include"ive_thresh.h"
+#include "ive_filter.h"
+#include "ive_thresh.h"
+#include "ive_add.h"
 
-#include"hisiImage.h"
-
+#include "hisiImage.h"
 
 void sobelExample();
 void SobelSampleBoth3x3();
@@ -66,6 +65,15 @@ int main(int argc, char *argv[])
     case '3':
         ive_thresh();
         break;
+    case '4':
+        iveAddSample();
+        break;
+    case 'p':
+    {
+        hisiImage img;
+        img.imread("./test.bmp");
+        break;
+    }
     default:
         break;
     }
@@ -180,33 +188,33 @@ void doSobelSample(IVE_SOBEL_OUT_CTRL_E enOutCtrl, HI_S8 *ps8Mask)
     memcpy(stCtrl.as8Mask, ps8Mask, sizeof(HI_S8) * 25);
     IVE_HANDLE handle;
 
-	HI_DOUBLE dTime;
-	dTime = (HI_DOUBLE)HI_GetTickCount();
-    printf("line:%d\n",__LINE__);
+    HI_DOUBLE dTime;
+    dTime = (HI_DOUBLE)HI_GetTickCount();
+    printf("line:%d\n", __LINE__);
 
     s32Result = HI_MPI_IVE_Sobel(&handle, &stSrc, &stDstH, &stDstV, &stCtrl, HI_TRUE);
     if (0 != s32Result)
     {
-        printf("HI_MPI_IVE_Sobel 错误 %x\n",s32Result);
+        printf("HI_MPI_IVE_Sobel 错误 %x\n", s32Result);
         return;
     }
-    HI_BOOL finish=(HI_BOOL)0;
-    HI_BOOL block=(HI_BOOL)1;
-    printf("line:%d\n",__LINE__);
-    do{
-    HI_MPI_IVE_Query(handle, &finish, block);
-    // printf("延时\n");
-    // usleep(5);
+    HI_BOOL finish = (HI_BOOL)0;
+    HI_BOOL block = (HI_BOOL)1;
+    printf("line:%d\n", __LINE__);
+    do
+    {
+        HI_MPI_IVE_Query(handle, &finish, block);
+        // printf("延时\n");
+        // usleep(5);
     } while (!finish);
     // sleep(1);
-    dTime = ((HI_DOUBLE)HI_GetTickCount() - dTime)/1000000000;
+    dTime = ((HI_DOUBLE)HI_GetTickCount() - dTime) / 1000000000;
 
-    printf("image w: %d h: %d, sobel time: %f\n",img.w,img.h,dTime);
-    printf("line:%d\n",__LINE__);
+    printf("image w: %d h: %d, sobel time: %f\n", img.w, img.h, dTime);
+    printf("line:%d\n", __LINE__);
     IVE_MMZ_FREE(stSrc.au64PhyAddr[0], stSrc.au64VirAddr[0]);
     IVE_MMZ_FREE(stDstH.au64PhyAddr[0], stDstH.au64VirAddr[0]);
     IVE_MMZ_FREE(stDstV.au64PhyAddr[0], stDstV.au64VirAddr[0]);
-
 }
 #endif
 
@@ -221,4 +229,3 @@ void SobelSampleBoth3x3()
 
     doSobelSample(enOutCtrl, mask);
 }
-

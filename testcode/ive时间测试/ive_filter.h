@@ -109,10 +109,20 @@ void FilterSampleY3x3()
                       0, 0, 0, 0, 0};
     FilterSample(IVE_IMAGE_TYPE_U8C1, mask, 4, fileName);
 }
+HI_VOID FilterSampleY5x5(HI_VOID){
+    HI_CHAR *fileName = (HI_CHAR *)"./test.bmp";
+	HI_S8 mask[25]={1,2,3,2,1,
+		2,5,6,5,2,
+		3,6,8,6,3,
+		2,5,6,5,2,
+		1,2,3,2,1};
+	FilterSample(IVE_IMAGE_TYPE_U8C1,mask,7,fileName); 
+}
 
 void ive_filter()
 {
     FilterSampleY3x3();
+    FilterSampleY5x5();
 }
 
 #endif
