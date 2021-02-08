@@ -1,6 +1,6 @@
 # easyToUseHisiSVP
 
-为了方便自己使用海思svp而建立的仓库
+海思svp关键点整理
 
 整理信息
 
