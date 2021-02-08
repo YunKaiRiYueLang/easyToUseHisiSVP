@@ -1,6 +1,9 @@
 #pragma once
 #include "hisiImage.h"
 #include"unistd.h"
+#include"iostream"
+#include"fstream"
+using std::ofstream;
 
 void SubSample(hisiImage &src1, hisiImage &src2, hisiImage &src3, IVE_SUB_CTRL_S &mode)
 {
@@ -24,7 +27,7 @@ void SubSample(hisiImage &src1, hisiImage &src2, hisiImage &src3, IVE_SUB_CTRL_S
     } while (!finish);
     t1 = (HI_GetTickCount() - t1) / 1000000000;
     printf("HI_MPI_IVE_Sub time:%f\n", t1);
-    
+
 }
 
 void SubSampleABS()
@@ -38,6 +41,21 @@ void SubSampleABS()
     IVE_SUB_CTRL_S ctrl;
     ctrl.enMode = IVE_SUB_MODE_ABS;
     SubSample(src1, src2, src3, ctrl);
+
+    ofstream s;
+    s.open("/mnt/bjwang/image2.txt", std::ios::out | std::ios::trunc);
+    signed char *p = (signed char *)src3.iveImg.au64VirAddr[0];
+    printf("width:%d", src3.iveImg.u32Width);
+    printf("height:%d", src3.iveImg.u32Height);
+    for (int i = 0; i < src3.iveImg.u32Height;i++){
+        for (int j = 0; j < src3.iveImg.u32Width;j++){
+            s << (int)p[j] << " ";
+            // printf("%d\n", p[j]);
+        }
+        p += src3.iveImg.au32Stride[0];
+        s << "\n";
+    }
+    s.close();
 }
 void SubSampleSHIFT(){
     hisiImage src1;
@@ -50,6 +68,20 @@ void SubSampleSHIFT(){
     ctrl.enMode = IVE_SUB_MODE_SHIFT;
     SubSample(src1, src2, src3, ctrl);
     writeGrayBmpImage("/mnt/bjwang/ive_sub_shift.bmp", src3);
+    ofstream s;
+    s.open("/mnt/bjwang/image1.txt", std::ios::out | std::ios::trunc);
+    signed char *p = (signed char *)src3.iveImg.au64VirAddr[0];
+    printf("width:%d", src3.iveImg.u32Width);
+    printf("height:%d", src3.iveImg.u32Height);
+    for (int i = 0; i < src3.iveImg.u32Height;i++){
+        for (int j = 0; j < src3.iveImg.u32Width;j++){
+            s << (int)p[j] << " ";
+            // printf("%d\n", p[j]);
+        }
+        p += src3.iveImg.au32Stride[0];
+        // s << "\n";
+    }
+    s.close();
 } 
 
 void ive_sub()

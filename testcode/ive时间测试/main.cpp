@@ -36,6 +36,7 @@ using std::string;
 #include "ive_add.h"
 #include "ive_and.hpp"
 #include "ive_sub.hpp"
+#include "ive_dma.hpp"
 
 #include "hisiImage.h"
 
@@ -75,6 +76,9 @@ int main(int argc, char *argv[])
         break;
     case '6':
         ive_sub();
+        break;
+    case '7':
+        ive_dma();
         break;
     case 'p':
     {
