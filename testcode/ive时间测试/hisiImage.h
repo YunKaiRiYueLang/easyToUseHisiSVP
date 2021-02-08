@@ -38,10 +38,12 @@
 class hisiImage
 {
 public:
-    hisiImage():iveImg()
-    {
-        // memset(this, 0, sizeof(hisiImage));
-    };
+    hisiImage() : iveImg(){
+                      // memset(this, 0, sizeof(hisiImage));
+                  };
+    // hisiImage(hisiImage &src1,IVE_IMAGE_TYPE_E type){
+    //     create(src1.iveImg.u32Width, src1.iveImg.u32Height, type);
+    // }
     // hisiImage(int width,int height,int channel,hiIVE_IMAGE_TYPE_E type){
     // if(0==width||0==height||0==channel&&(type!=IVE_IMAGE_TYPE_U8C1))
     //
@@ -58,13 +60,13 @@ public:
     };
     void getIVEImage(IVE_IMAGE_S &out)
     {
-        // memset(&out, 0, sizeof(IVE_IMAGE_S));    
+        // memset(&out, 0, sizeof(IVE_IMAGE_S));
         out.enType = iveImg.enType;
         out.u32Height = iveImg.u32Height;
-        out.u32Width =iveImg.u32Width;
-        memcpy(out.au64VirAddr, (void*)iveImg.au64VirAddr[0], 3 * sizeof(HI_U64));
-        memcpy(out.au64PhyAddr, (void*)iveImg.au64PhyAddr[0], 3 * sizeof(HI_U64));
-        memcpy(out.au32Stride, (void*)iveImg.au32Stride[0], 3 * sizeof(HI_U32));
+        out.u32Width = iveImg.u32Width;
+        memcpy(out.au64VirAddr, (void *)iveImg.au64VirAddr[0], 3 * sizeof(HI_U64));
+        memcpy(out.au64PhyAddr, (void *)iveImg.au64PhyAddr[0], 3 * sizeof(HI_U64));
+        memcpy(out.au32Stride, (void *)iveImg.au32Stride[0], 3 * sizeof(HI_U32));
     }
     IVE_IMAGE_S getIVEImage() const
     {
@@ -97,33 +99,38 @@ public:
         }
         unsigned char *pive = (unsigned char *)iveImg.au64VirAddr[0];
         unsigned char *psrc = (unsigned char *)img.data;
-        for (int i = 0; i < img.h;i++){
+        for (int i = 0; i < img.h; i++)
+        {
             memcpy(pive, psrc, img.w);
             pive += iveImg.au32Stride[0];
             psrc += img.w;
         }
-
-
     };
-    void create(int w,int h,hiIVE_IMAGE_TYPE_E type=IVE_IMAGE_TYPE_U8C1){
+    inline void create(int w, int h, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
+    {
         int s32Result = HI_CreateIveImage(&iveImg, type, w, h);
         if (0 != s32Result)
         {
-            printf("创建图像错误 error code:%x\n",s32Result);
+            printf("创建图像错误 error code:%x\n", s32Result);
             return;
         }
     };
-    void create(const hisiImage &input){
+    void create(const hisiImage &input)
+    {
         int s32Result = HI_CreateIveImage(&iveImg, input.iveImg.enType, input.iveImg.au32Stride[0], input.iveImg.u32Height);
         if (0 != s32Result)
         {
-            printf("创建图像错误 error code:%x\n",s32Result);
+            printf("创建图像错误 error code:%x\n", s32Result);
             printf("type %x,stride:%d,height:%d\n", input.iveImg.enType, input.iveImg.au32Stride[0], input.iveImg.u32Height);
             return;
         }
     }
+    void create(const hisiImage &input, IVE_IMAGE_TYPE_E type)
+    {
+        create(input.iveImg.u32Width, input.iveImg.u32Height, type);
+    }
 
-private:
+public:
     IVE_IMAGE_S iveImg;
     // int height;
     // int width;
@@ -134,9 +141,10 @@ private:
     // HI_U32 au32Stride[3];  /* RW;The stride of the image */
 };
 
-bool writeGrayBmpImage(const char* path,const hisiImage &src ){
+bool writeGrayBmpImage(const char *path, const hisiImage &src)
+{
     IVE_IMAGE_S img = src.getIVEImage();
-    int ret = stbi_write_bmp(path, img.au32Stride[0], img.u32Height, 1, (void*)img.au64VirAddr[0]);
+    int ret = stbi_write_bmp(path, img.au32Stride[0], img.u32Height, 1, (void *)img.au64VirAddr[0]);
 }
 
 #endif
