@@ -82,6 +82,15 @@ public:
         return out;*/
         return iveImg;
     }
+    IVE_DATA_S getIVEData()const{
+        IVE_DATA_S data;
+        data.u32Height = iveImg.u32Height;
+        data.u32Width = iveImg.u32Width;
+        data.u32Stride = iveImg.au32Stride[0];
+        data.u64VirAddr = iveImg.au64VirAddr[0];
+        data.u64PhyAddr = iveImg.au64PhyAddr[0];
+        return data;
+    }
     void imread(const char *filePath, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
     {
         stbImageData img;
