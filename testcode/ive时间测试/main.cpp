@@ -34,6 +34,8 @@ using std::string;
 #include "ive_filter.h"
 #include "ive_thresh.h"
 #include "ive_add.h"
+#include "ive_and.hpp"
+#include "ive_sub.hpp"
 
 #include "hisiImage.h"
 
@@ -67,6 +69,12 @@ int main(int argc, char *argv[])
         break;
     case '4':
         iveAddSample();
+        break;
+    case '5':
+        iveAnd();
+        break;
+    case '6':
+        ive_sub();
         break;
     case 'p':
     {
