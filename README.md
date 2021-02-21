@@ -11,6 +11,6 @@
 
 ## 和我讨论
 
-mail: 1510627880@qq.com
+mail:1510627880@qq.com
 
 wechat: wbj095067
