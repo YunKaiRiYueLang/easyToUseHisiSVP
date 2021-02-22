@@ -10,6 +10,10 @@
 
 ## hisiImage类的使用
 
+在文件夹 **对ive图像格式的封装** 中包含了对ive图像格式封装的源码。不使用opencv则不必使用**cvive.hpp**
+
+存取图像的代码。
+
 ```c++
     //从本地读取图像
     hisiImage src1;
