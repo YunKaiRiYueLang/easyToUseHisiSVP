@@ -17,7 +17,7 @@
  */
 bool iveImageToMat(Mat &outCvImage, IVE_IMAGE_S &inputIveImage)
 {
-    if (inputIveImage.u32Width || inputIveImage.u32Height == 0)
+    if (inputIveImage.u32Width==0 || inputIveImage.u32Height == 0)
     {
         error("EMPTY IVE_IMAGE_S IMAGE");
         return false;
@@ -31,6 +31,7 @@ bool iveImageToMat(Mat &outCvImage, IVE_IMAGE_S &inputIveImage)
     {
     // case IVE_IMAGE_TYPE_S8C1:
     case IVE_IMAGE_TYPE_U8C1:
+    {
         uchar *pcv = outCvImage.data;
         uchar *pive = (uchar *)inputIveImage.au64VirAddr[0];
         for (int i = 0; i < inputIveImage.u32Height; i++)
@@ -40,7 +41,7 @@ bool iveImageToMat(Mat &outCvImage, IVE_IMAGE_S &inputIveImage)
             pive += inputIveImage.au32Stride[0];
         }
         return true;
-
+    }
     default:
         error("NO CORRECT FORMAT");
         return false;
