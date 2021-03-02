@@ -32,7 +32,7 @@
   - [x] iveAdd
   - [x] iveSobel
   - [ ] iveSub
-  - [ ] iveThresh
+  - [x] iveThresh
 - [ ] 完善智能指针，进一步优化内存管理
 
 代码会陆续整合。欢迎Star。

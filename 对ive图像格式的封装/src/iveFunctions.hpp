@@ -76,6 +76,8 @@ namespace eive
     }
 
     // 不需要的输出可以是空图像
+    // format,src: u8c1;dstH,dstV:s16c1
+    //
     void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, IVE_SOBEL_CTRL_S &ctrl, HI_BOOL needblock)
     {
         IVE_SRC_IMAGE_S stSrc = src.getIVEImage();
@@ -86,7 +88,6 @@ namespace eive
         if (0 != s32Result)
         {
             printf("line%d HI_MPI_IVE_Sobel:%x\n", __LINE__, s32Result);
-            errorCode(" iveSobel:HI_MPI_IVE_Sobel "，s32Result);
             return;
         }
         if (needblock)
@@ -95,7 +96,31 @@ namespace eive
             HI_BOOL block = (HI_BOOL)1;
             do
             {
-                HI_MPI_IVE_Query(addHandle, &finish, block);
+                HI_MPI_IVE_Query(handle, &finish, block);
+                // printf("延时\n");
+                // usleep(5);
+            } while (!finish);
+        }
+    }
+
+    void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &ctrl, HI_BOOL needblock)
+    {
+        IVE_IMAGE_S stSrc = src.getIVEImage();
+        IVE_IMAGE_S stDst = dst.getIVEImage();
+        IVE_HANDLE handle;
+        int s32Result = HI_MPI_IVE_Thresh_S16(&handle, &stSrc, &stDst, &ctrl, needblock);
+        if (0 != s32Result)
+        {
+            printf("\033[31m line %d HI_MPI_IVE_Sobel %x \n\033[0m", __LINE__, s32Result);
+            return;
+        }
+        if (needblock)
+        {
+            HI_BOOL finish = (HI_BOOL)0;
+            HI_BOOL block = (HI_BOOL)1;
+            do
+            {
+                HI_MPI_IVE_Query(handle, &finish, block);
                 // printf("延时\n");
                 // usleep(5);
             } while (!finish);
