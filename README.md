@@ -30,7 +30,7 @@
 - [ ] 对ive函数的封装，进一步使用封装的ive图像相关的类
   - [x] iveAnd
   - [x] iveAdd
-  - [ ] iveSobel
+  - [x] iveSobel
   - [ ] iveSub
   - [ ] iveThresh
 - [ ] 完善智能指针，进一步优化内存管理
