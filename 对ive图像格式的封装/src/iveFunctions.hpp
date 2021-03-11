@@ -14,6 +14,24 @@
 #include "debug.hpp"
 #include "hisiImage.h"
 
+#define CHECK_IVE_FUNCTION(name, code) \
+    if (0 != code)                     \
+    {                                  \
+        errorCode(name, code);         \
+        return;                        \
+    }
+
+#define BLOCK_IVE_FUNCTION(condition, handle)         \
+    if (condition)                                    \
+    {                                                 \
+        HI_BOOL finish = (HI_BOOL)0;                  \
+        HI_BOOL block = (HI_BOOL)1;                   \
+        do                                            \
+        {                                             \
+            HI_MPI_IVE_Query(handle, &finish, block); \
+        } while (!finish);                            \
+    }
+
 namespace eive
 {
     void IVEAnd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, HI_BOOL needblock)
@@ -102,7 +120,7 @@ namespace eive
             } while (!finish);
         }
     }
-
+    
     void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &ctrl, HI_BOOL needblock)
     {
         IVE_IMAGE_S stSrc = src.getIVEImage();
@@ -125,5 +143,22 @@ namespace eive
                 // usleep(5);
             } while (!finish);
         }
+    }
+
+    /**
+     * @brief 根据不同的模板系数，实现不同的滤波
+     * 
+     */
+    void iveFilter(const hisiImage &hisrc, hisiImage &hidst, signed char mask[25], unsigned char norm, int needBlock)
+    {
+        IVE_IMAGE_S src = hisrc.getIVEImage();
+        IVE_IMAGE_S dst = hidst.getIVEImage();
+        IVE_HANDLE filterHandle;
+        IVE_FILTER_CTRL_S ctrl;
+        memcpy(ctrl.as8Mask, mask, 25);
+        ctrl.u8Norm = norm;
+        int s32Result = HI_MPI_IVE_Filter(&filterHandle, &src, &dst, &ctrl, (HI_BOOL)needBlock);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_Filter", s32Result);
+        BLOCK_IVE_FUNCTION(needBlock, filterHandle);
     }
 }

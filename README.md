@@ -45,6 +45,7 @@
   - [x] iveAnd
   - [x] iveAdd
   - [x] iveSobel
+  - [x] iveFilter
   - [ ] iveSub
   - [x] iveThresh
 - [ ] 完善智能指针，进一步优化内存管理
