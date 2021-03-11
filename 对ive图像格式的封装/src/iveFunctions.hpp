@@ -120,7 +120,6 @@ namespace eive
             } while (!finish);
         }
     }
-    
     void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &ctrl, HI_BOOL needblock)
     {
         IVE_IMAGE_S stSrc = src.getIVEImage();
@@ -160,5 +159,25 @@ namespace eive
         int s32Result = HI_MPI_IVE_Filter(&filterHandle, &src, &dst, &ctrl, (HI_BOOL)needBlock);
         CHECK_IVE_FUNCTION("HI_MPI_IVE_Filter", s32Result);
         BLOCK_IVE_FUNCTION(needBlock, filterHandle);
+    }
+
+    /**
+     * @brief 
+     * 
+     * @param hisrc 
+     * @param hidst 
+     * @param mode 
+     * @param needBlock 
+     */
+    void iveOrdStatFilter(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
+    {
+        IVE_IMAGE_S src = hisrc.getIVEImage();
+        IVE_IMAGE_S dst = hidst.getIVEImage();
+        IVE_ORD_STAT_FILTER_CTRL_S ctrl;
+        ctrl.enMode = (IVE_ORD_STAT_FILTER_MODE_E)mode;
+        IVE_HANDLE osfHandle;
+        int s32Ret = HI_MPI_IVE_OrdStatFilter(&osfHandle, &src, &dst, &ctrl, (HI_BOOL)needBlock);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_OrdStatFilter", s32Ret);
+        BLOCK_IVE_FUNCTION(needBlock, osfHandle);
     }
 }
