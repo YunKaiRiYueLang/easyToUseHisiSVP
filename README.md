@@ -20,7 +20,21 @@
     src1.imread("/mnt/bjwang/f11024.bmp");
     //存储一个图像
     writeGrayBmpImage("/mnt/bjwang/ive.bmp", src1);
-    //配合ive函数的数据转换接口等见源码
+    //使用滤波函数
+    HI_S8 mask[25] = {
+        1,4,7,4,1,
+        4,16,26,16,4,
+        7,26,41,26,7,
+        4,16,26,16,4,
+        1,4,7,4,1
+    };
+    HI_U8 norm = 8;
+    int needBlock = 1;
+    hisiImage src;src.imread("/mnt/bjwang/f11024.bmp");
+    hisiImage dst;dst.create(src);
+    eive::iveFilter(src, dst, mask, norm, needBlock);
+
+
 ```
 
 ## 待完善事项
