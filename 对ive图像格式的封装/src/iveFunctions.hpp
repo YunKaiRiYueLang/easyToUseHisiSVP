@@ -145,7 +145,7 @@ namespace eive
         ctrl.enOutCtrl = (IVE_SOBEL_OUT_CTRL_E)mode;
         int s32Result = HI_MPI_IVE_Sobel(&iveHandle, &stSrc, IVE_SOBEL_OUT_CTRL_VER != ctrl.enOutCtrl ? &stDstH : HI_NULL, IVE_SOBEL_OUT_CTRL_HOR != ctrl.enOutCtrl ? &stDstV : HI_NULL, &ctrl, (HI_BOOL)needblock);
         CHECK_IVE_FUNCTION("HI_MPI_IVE_Filter", s32Result);
-        BLOCK_IVE_FUNCTION(needBlock, iveHandle);
+        BLOCK_IVE_FUNCTION(needblock, iveHandle);
     }
     void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, IVE_SOBEL_CTRL_S &ctrl, HI_BOOL needblock)
     {
@@ -171,6 +171,33 @@ namespace eive
             } while (!finish);
         }
     }
+
+    /**
+     * @brief 
+     * 
+     * @param src 
+     * @param dst   
+     * @param thrV 
+     * @param minV 
+     * @param maxV 
+     * @param mode 
+     * @param needBlock 
+     */
+    void iveThresh(const hisiImage &src, hisiImage &dst,unsigned char thrV,unsigned char minV,unsigned char maxV ,int mode, int needBlock)
+    {
+        IVE_THRESH_CTRL_S threshCtrl;
+        threshCtrl.enMode = (IVE_THRESH_MODE_E)mode;
+        threshCtrl.u8LowThr = thrV;
+        threshCtrl.u8MinVal = minV;
+        threshCtrl.u8MaxVal = maxV;
+        IVE_HANDLE threshHandle;
+        IVE_DATA_S src = src.getIVEData();
+        IVE_DATA_S dst = dst.getIVEData();
+        int s32ret = HI_MPI_IVE_Thresh(&threshHandle, &src, &dst, &threshCtrl, (HI_BOOL)needBlock);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_Thresh", s32ret);
+        BLOCK_IVE_FUNCTION(needBlock, threshHandle);
+    }
+
     void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &ctrl, HI_BOOL needblock)
     {
         IVE_IMAGE_S stSrc = src.getIVEImage();
