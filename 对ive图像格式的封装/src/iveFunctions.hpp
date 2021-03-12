@@ -92,7 +92,17 @@ namespace eive
             } while (!finish);
         }
     }
-
+    void iveSub(const hisiImage &hisrc1, const hisiImage &hisrc2, hisiImage &hidst, int mode, int needBlock)
+    {
+        IVE_IMAGE_S src1 = hisrc1.getIVEImage();
+        IVE_IMAGE_S src2 = hisrc2.getIVEImage();
+        IVE_IMAGE_S dst = hidst.getIVEImage();
+        ctrl.enMode = (IVE_SUB_MODE_E)mode;
+        IVE_HANDLE subHandle;
+        int s32Ret = HI_MPI_IVE_Sub(&subHandle, &src1, &src2, &dst, &ctrl, (HI_BOOL)needBlock);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_Sub", s32Ret);
+        BLOCK_IVE_FUNCTION(needBlock, subHandle);
+    }
     // 不需要的输出可以是空图像
     // format,src: u8c1;dstH,dstV:s16c1
     //
