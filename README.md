@@ -44,11 +44,12 @@
 - [ ] 对ive函数的封装，进一步使用封装的ive图像相关的类
   - [x] iveAnd
   - [x] iveAdd
-  - [x] iveDMA,dma directly copy
+  - [x] iveDMA, dma directly copy
   - [x] iveSobel
   - [x] iveFilter
   - [x] iveSub
-  - [x] iveThresh
+  - [x] iveThresh  binary模式
+  - [x] iveThresh16
   - [x] iveOrdStatFilter
 - [ ] 完善智能指针，进一步优化内存管理
 
