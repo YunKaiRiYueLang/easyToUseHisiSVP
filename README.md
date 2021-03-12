@@ -44,6 +44,7 @@
 - [ ] 对ive函数的封装，进一步使用封装的ive图像相关的类
   - [x] iveAnd
   - [x] iveAdd
+  - [x] iveDMA,dma directly copy
   - [x] iveSobel
   - [x] iveFilter
   - [x] iveSub
