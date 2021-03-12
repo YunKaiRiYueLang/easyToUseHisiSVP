@@ -34,6 +34,20 @@
 
 namespace eive
 {
+    // IVE_DMA_MODE_DIRECT_COPY.并且只把一个图像从一处拷贝到另一处
+    void iveDMA(hisiImage &src1, hisiImage &dst, int mode, int needBlock)
+    {
+        IVE_HANDLE dmaHandle;
+        IVE_DATA_S ivesrc1 = src1.getIVEData();
+        IVE_DATA_S ivedst = dst.getIVEData();
+        IVE_DMA_CTRL_S ctrl;
+        memset(&ctrl, 0, sizeof(IVE_DMA_CTRL_S));
+        ctrl.enMode = (IVE_DMA_MODE_E)mode;
+        int s32ret = HI_MPI_IVE_DMA(&dmaHandle, &ivesrc1, &ivedst, &ctrl, (HI_BOOL)needBlock);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_DMA", s32ret);
+        BLOCK_IVE_FUNCTION(needBlock, dmaHandle);
+    }
+
     void IVEAnd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, HI_BOOL needblock)
     {
 
@@ -61,6 +75,19 @@ namespace eive
                 }
             } while (!finish);
         }
+    }
+    void iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const unsigned short x, const unsigned short y, const int bInstant)
+    {
+        IVE_ADD_CTRL_S pstAddCtrl;
+        pstAddCtrl.u0q16X = x;
+        pstAddCtrl.u0q16Y = y;
+        IVE_HANDLE handle;
+        IVE_IMAGE_S img1 = src1.getIVEImage();
+        IVE_IMAGE_S img2 = src2.getIVEImage();
+        IVE_IMAGE_S img3 = dst.getIVEImage();
+        int s32ret = HI_MPI_IVE_Add(&handle, &img1, &img2, &img3, &pstAddCtrl, (HI_BOOL)bInstant);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_Add", s32ret);
+        BLOCK_IVE_FUNCTION(bInstant, handle);
     }
     void iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const unsigned short x, const unsigned short y, const HI_BOOL bInstant)
     {
@@ -107,6 +134,19 @@ namespace eive
     // 不需要的输出可以是空图像
     // format,src: u8c1;dstH,dstV:s16c1
     //
+    void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, signed char mask[25], int mode, int needblock)
+    {
+        IVE_SRC_IMAGE_S stSrc = src.getIVEImage();
+        IVE_DST_IMAGE_S stDstH = dstH.getIVEImage();
+        IVE_DST_IMAGE_S stDstV = dstV.getIVEImage();
+        IVE_HANDLE iveHandle;
+        IVE_SOBEL_CTRL_S ctrl;
+        memcpy(ctrl.as8Mask, mask, 25);
+        ctrl.enOutCtrl = (IVE_SOBEL_OUT_CTRL_E)mode;
+        int s32Result = HI_MPI_IVE_Sobel(&iveHandle, &stSrc, IVE_SOBEL_OUT_CTRL_VER != ctrl.enOutCtrl ? &stDstH : HI_NULL, IVE_SOBEL_OUT_CTRL_HOR != ctrl.enOutCtrl ? &stDstV : HI_NULL, &ctrl, (HI_BOOL)needblock);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_Filter", s32Result);
+        BLOCK_IVE_FUNCTION(needBlock, iveHandle);
+    }
     void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, IVE_SOBEL_CTRL_S &ctrl, HI_BOOL needblock)
     {
         IVE_SRC_IMAGE_S stSrc = src.getIVEImage();
