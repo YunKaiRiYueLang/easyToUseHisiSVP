@@ -20,12 +20,12 @@ bool iveImageToMat(Mat &outCvImage, IVE_IMAGE_S &inputIveImage)
 {
     if (inputIveImage.u32Width == 0 || inputIveImage.u32Height == 0)
     {
-        error("EMPTY IVE_IMAGE_S IMAGE");
+        // error("EMPTY IVE_IMAGE_S IMAGE");
         return false;
     }
     if (outCvImage.rows != inputIveImage.u32Height || outCvImage.cols != inputIveImage.u32Width)
     {
-        error("image size dose not match");
+        // error("image size dose not match");
         return false;
     }
     switch (inputIveImage.enType)
@@ -44,7 +44,7 @@ bool iveImageToMat(Mat &outCvImage, IVE_IMAGE_S &inputIveImage)
         return true;
     }
     default:
-        error("NO CORRECT FORMAT");
+        // error("NO CORRECT FORMAT");
         return false;
     }
 }
@@ -59,7 +59,7 @@ bool iveImageToMat(Mat &outCvImage, IVE_IMAGE_S &inputIveImage)
 bool MatU8C1ImageToIve(const Mat &input, IVE_IMAGE_S &output)
 {
     if(input.data==NULL||output.u32Width==0){
-        error("do not be prepared for input image or output image");
+        // error("do not be prepared for input image or output image");
         return false;
     }
     uchar *pInput = input.data;

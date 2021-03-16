@@ -2,16 +2,17 @@
 #define __HISIIMAGE_H__
 
 #include "hi_comm_ive.h"
+#include "hi_comm_sys.h"
 #include "hi_ive.h"
 #include "mpi_ive.h"
-#include "hi_comm_sys.h"
 #include "mpi_sys.h"
 #include "sample_assist.h"
 
 #include "readimage.h"
 
-#include "hisiImage.h"
 #include "time.h"
+
+#include"commonHeader.h"
 
 #if !defined(STB_IMAGE_IMPLEMENTATION)
 #define STB_IMAGE_IMPLEMENTATION
@@ -38,12 +39,14 @@
 class hisiImage
 {
 public:
-    hisiImage() : iveImg(){
-                      // memset(this, 0, sizeof(hisiImage));
-                  };
-    // hisiImage(hisiImage &src1,IVE_IMAGE_TYPE_E type){
-    //     create(src1.iveImg.u32Width, src1.iveImg.u32Height, type);
-    // }
+    hisiImage() : iveImg()
+    {
+        memset(this, 0, sizeof(hisiImage));
+    };
+    hisiImage(const cv::Mat &cvSrc)
+    {
+        this->cloneFrom(cvSrc);
+    }
     // hisiImage(int width,int height,int channel,hiIVE_IMAGE_TYPE_E type){
     // if(0==width||0==height||0==channel&&(type!=IVE_IMAGE_TYPE_U8C1))
     //
@@ -64,9 +67,9 @@ public:
         out.enType = iveImg.enType;
         out.u32Height = iveImg.u32Height;
         out.u32Width = iveImg.u32Width;
-        memcpy(out.au64VirAddr, (void *)iveImg.au64VirAddr[0], 3 * sizeof(HI_U64));
-        memcpy(out.au64PhyAddr, (void *)iveImg.au64PhyAddr[0], 3 * sizeof(HI_U64));
-        memcpy(out.au32Stride, (void *)iveImg.au32Stride[0], 3 * sizeof(HI_U32));
+        memcpy(out.au64VirAddr, iveImg.au64VirAddr, 3 * sizeof(HI_U64));
+        memcpy(out.au64PhyAddr, iveImg.au64PhyAddr, 3 * sizeof(HI_U64));
+        memcpy(out.au32Stride, iveImg.au32Stride, 3 * sizeof(HI_U32));
     }
     IVE_IMAGE_S getIVEImage() const
     {
@@ -82,14 +85,15 @@ public:
         return out;*/
         return iveImg;
     }
-    IVE_DATA_S getIVEData()const{
-        IVE_DATA_S data;
-        data.u32Height = iveImg.u32Height;
-        data.u32Width = iveImg.u32Width;
-        data.u32Stride = iveImg.au32Stride[0];
-        data.u64VirAddr = iveImg.au64VirAddr[0];
-        data.u64PhyAddr = iveImg.au64PhyAddr[0];
-        return data;
+    IVE_DATA_S getIVEData() const
+    {
+        IVE_DATA_S ret;
+        ret.u32Height = iveImg.u32Height;
+        ret.u32Width = iveImg.u32Width;
+        ret.u32Stride = iveImg.au32Stride[0];
+        ret.u64VirAddr = iveImg.au64VirAddr[0];
+        ret.u64PhyAddr = iveImg.au64PhyAddr[0];
+        return ret;
     }
     void imread(const char *filePath, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
     {
@@ -133,10 +137,44 @@ public:
             printf("type %x,stride:%d,height:%d\n", input.iveImg.enType, input.iveImg.au32Stride[0], input.iveImg.u32Height);
             return;
         }
+        size_t length = iveImg.au32Stride[0] * iveImg.u32Height;
+        memset((void *)iveImg.au64VirAddr[0], 0, length);
     }
     void create(const hisiImage &input, IVE_IMAGE_TYPE_E type)
     {
         create(input.iveImg.u32Width, input.iveImg.u32Height, type);
+    }
+    void cloneFrom(const cv::Mat &src)
+    {
+        IVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1;
+        int s32ret = HI_CreateIveImage(&iveImg, type, src.cols, src.rows);
+        if (0 != s32ret)
+        {
+            printf("创建图像错误 error code:%x\n", s32ret);
+            return;
+        }
+        unsigned char *p = (unsigned char *)iveImg.au64VirAddr[0];
+        unsigned char *psrc = src.data;
+        int width = src.cols;
+        for (int i = 0; i < src.rows; i++)
+        {
+            memcpy(p, psrc, width);
+            p += iveImg.au32Stride[0];
+            psrc += width;
+        }
+    }
+    void copyTo(cv::Mat &dst)
+    {
+        dst = cv::Mat::zeros(iveImg.u32Height, iveImg.au32Stride[0], CV_8UC1);
+        unsigned char *p = (unsigned char *)iveImg.au64VirAddr[0];
+        unsigned char *psrc = dst.data;
+        int width = iveImg.au32Stride[0];
+        for (int i = 0; i < dst.rows; i++)
+        {
+            memcpy(psrc, p, width);
+            p += iveImg.au32Stride[0];
+            psrc += width;
+        }
     }
 
 public:

@@ -6,6 +6,12 @@
 #include "stb_image.h"
 #endif // STB_IMAGE_IMPLEMENTATION
 
+
+#if !defined(STB_IMAGE_WRITE_IMPLEMENTATION)
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+#endif
+
 typedef struct{
     int w;
     int h;
