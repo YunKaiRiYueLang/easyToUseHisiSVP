@@ -48,6 +48,18 @@ namespace eive
         BLOCK_IVE_FUNCTION(needBlock, dmaHandle);
     }
 
+    void iveAnd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, int needBlock)
+    {
+
+        IVE_HANDLE handle;
+        IVE_IMAGE_S ivesrc1 = src1.getIVEImage();
+        IVE_IMAGE_S ivesrc2 = src2.getIVEImage();
+        IVE_IMAGE_S ivesrc3 = dst.getIVEImage();
+        int s32ret = HI_MPI_IVE_And(&handle, &ivesrc1, &ivesrc2, &ivesrc3, (HI_BOOL)needBlock);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_And", s32ret);
+        BLOCK_IVE_FUNCTION(needBlock, handle);
+    }
+
     void IVEAnd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, HI_BOOL needblock)
     {
 
@@ -78,6 +90,11 @@ namespace eive
     }
     void iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const unsigned short x, const unsigned short y, const int bInstant)
     {
+        if (src1.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || src2.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || dst.iveImg.enType != IVE_IMAGE_TYPE_U8C1)
+        {
+            errorCode("iveAdd input image format error", 0);
+            return;
+        }
         IVE_ADD_CTRL_S pstAddCtrl;
         pstAddCtrl.u0q16X = x;
         pstAddCtrl.u0q16Y = y;
@@ -91,6 +108,11 @@ namespace eive
     }
     void iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const unsigned short x, const unsigned short y, const HI_BOOL bInstant)
     {
+        if (src1.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || src2.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || dst.iveImg.enType != IVE_IMAGE_TYPE_U8C1)
+        {
+            errorCode("iveAdd input image format error", 0);
+            return;
+        }
         IVE_ADD_CTRL_S pstAddCtrl;
         pstAddCtrl.u0q16X = x;
         pstAddCtrl.u0q16Y = y;
@@ -121,6 +143,22 @@ namespace eive
     }
     void iveSub(const hisiImage &hisrc1, const hisiImage &hisrc2, hisiImage &hidst, int mode, int needBlock)
     {
+        if (hisrc1.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || hisrc2.iveImg.enType != IVE_IMAGE_TYPE_U8C1)
+        {
+            errorCode("iveSub input image format error", 0);
+            return;
+        }
+        if (mode == 0 && hidst.iveImg.enType != IVE_IMAGE_TYPE_U8C1)
+        {
+            errorCode("iveSub dst image format error", 0);
+            return;
+        }
+        if (mode == 1 && hidst.iveImg.enType != IVE_IMAGE_TYPE_S8C1)
+        {
+            errorCode("iveSub dst image format error", 0);
+            return;
+        }
+
         IVE_IMAGE_S src1 = hisrc1.getIVEImage();
         IVE_IMAGE_S src2 = hisrc2.getIVEImage();
         IVE_IMAGE_S dst = hidst.getIVEImage();
@@ -136,15 +174,21 @@ namespace eive
     //
     void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, signed char mask[25], int mode, int needblock)
     {
-        IVE_SRC_IMAGE_S stSrc = src.getIVEImage();
-        IVE_DST_IMAGE_S stDstH = dstH.getIVEImage();
-        IVE_DST_IMAGE_S stDstV = dstV.getIVEImage();
+        CHECK_HISIIMAGE(src, 1920, 1024);
+        if (src.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || dstH.iveImg.enType != IVE_IMAGE_TYPE_S16C1 || dstV.iveImg.enType != IVE_IMAGE_TYPE_S16C1)
+        {
+            errorCode("iveSobel input image format error", 0);
+            return;
+        }
+        IVE_IMAGE_S stSrc = src.getIVEImage();
+        IVE_IMAGE_S stDstH = dstH.getIVEImage();
+        IVE_IMAGE_S stDstV = dstV.getIVEImage();
         IVE_HANDLE iveHandle;
         IVE_SOBEL_CTRL_S ctrl;
-        memcpy(ctrl.as8Mask, mask, 25);
+        memcpy(ctrl.as8Mask, mask, sizeof(HI_S8) * 25);
         ctrl.enOutCtrl = (IVE_SOBEL_OUT_CTRL_E)mode;
         int s32Result = HI_MPI_IVE_Sobel(&iveHandle, &stSrc, IVE_SOBEL_OUT_CTRL_VER != ctrl.enOutCtrl ? &stDstH : HI_NULL, IVE_SOBEL_OUT_CTRL_HOR != ctrl.enOutCtrl ? &stDstV : HI_NULL, &ctrl, (HI_BOOL)needblock);
-        CHECK_IVE_FUNCTION("HI_MPI_IVE_Filter", s32Result);
+        CHECK_IVE_FUNCTION("HI_MPI_IVE_Sobel", s32Result);
         BLOCK_IVE_FUNCTION(needblock, iveHandle);
     }
     void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, IVE_SOBEL_CTRL_S &ctrl, HI_BOOL needblock)
@@ -183,7 +227,7 @@ namespace eive
      * @param mode 
      * @param needBlock 
      */
-    void iveThresh(const hisiImage &src, hisiImage &dst,unsigned char thrV,unsigned char minV,unsigned char maxV ,int mode, int needBlock)
+    void iveThresh(const hisiImage &src, hisiImage &dst, unsigned char thrV, unsigned char minV, unsigned char maxV, int mode, int needBlock)
     {
         IVE_THRESH_CTRL_S threshCtrl;
         threshCtrl.enMode = (IVE_THRESH_MODE_E)mode;
@@ -191,15 +235,21 @@ namespace eive
         threshCtrl.u8MinVal = minV;
         threshCtrl.u8MaxVal = maxV;
         IVE_HANDLE threshHandle;
-        IVE_DATA_S src = src.getIVEData();
-        IVE_DATA_S dst = dst.getIVEData();
-        int s32ret = HI_MPI_IVE_Thresh(&threshHandle, &src, &dst, &threshCtrl, (HI_BOOL)needBlock);
+        IVE_IMAGE_S iveSrc = src.getIVEImage();
+        IVE_IMAGE_S iveDst = dst.getIVEImage();
+        int s32ret = HI_MPI_IVE_Thresh(&threshHandle, &iveSrc, &iveDst, &threshCtrl, (HI_BOOL)needBlock);
         CHECK_IVE_FUNCTION("HI_MPI_IVE_Thresh", s32ret);
         BLOCK_IVE_FUNCTION(needBlock, threshHandle);
     }
 
+    /*控制参数太多，先保留ive类型的控制参数*/
     void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &ctrl, HI_BOOL needblock)
     {
+        if (src.iveImg.enType != IVE_IMAGE_TYPE_S16C1)
+        {
+            errorCode("iveThreshS16 input image format error\n input src must be IVE_IMAGE_TYPE_S16C1", 0);
+            return;
+        }
         IVE_IMAGE_S stSrc = src.getIVEImage();
         IVE_IMAGE_S stDst = dst.getIVEImage();
         IVE_HANDLE handle;
