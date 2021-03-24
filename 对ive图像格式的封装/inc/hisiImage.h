@@ -8,8 +8,6 @@
 #include "mpi_sys.h"
 #include "sample_assist.h"
 
-#include "readimage.h"
-
 #include "time.h"
 
 #include"commonHeader.h"
