@@ -1,6 +1,6 @@
 /**
  * @file debug.hpp 
- * @author your name (you@domain.com)
+ * @author wangbianjiang (1510627880@qq.com)
  * @brief 
  * @version 0.1
  * @date 2021-03-15
@@ -55,5 +55,12 @@
     if (src.iveImg.u32Height > h || src.iveImg.u32Width > w) \
     {                                                        \
         errorCode("image size is inappropriate", 0);         \
+    }
+
+#define CHECK_HISI_FUNCTION(msg, ret) \
+    if (0 != ret)                     \
+    {                                 \
+        errorCode(msg, ret);        \
+        return ret;                   \
     }
     
