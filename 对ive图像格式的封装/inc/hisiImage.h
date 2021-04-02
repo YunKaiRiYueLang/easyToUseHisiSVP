@@ -10,7 +10,7 @@
 
 #include "time.h"
 
-#include"commonHeader.h"
+#include "commonHeader.h"
 
 #if !defined(STB_IMAGE_IMPLEMENTATION)
 #define STB_IMAGE_IMPLEMENTATION
@@ -22,14 +22,16 @@
 #include "stb_image_write.h"
 #endif
 
-typedef struct{
+typedef struct
+{
     int w;
     int h;
     int c;
     unsigned char *data;
 } stbImageData;
 
-bool readGrayBmpImage(const char* path,stbImageData &image){
+bool readGrayBmpImage(const char *path, stbImageData &image)
+{
     int x, y, channels_in_file, desired_channels = 1;
     image.data = stbi_load(path, &x, &y, &channels_in_file, desired_channels);
     if (!image.data)
@@ -46,13 +48,10 @@ bool readGrayBmpImage(const char* path,stbImageData &image){
     return true;
 }
 
-bool writeGrayBmpImage(const char* path,stbImageData &image){
+bool writeGrayBmpImage(const char *path, stbImageData &image)
+{
     int ret = stbi_write_bmp(path, image.w, image.h, image.c, image.data);
 }
-
-
-
-
 #define IVE_MMZ_FREE(phy, vir)                                  \
     do                                                          \
     {                                                           \
@@ -64,7 +63,6 @@ bool writeGrayBmpImage(const char* path,stbImageData &image){
         }                                                       \
     } while (0)
 
-//目前只写用到的。涉及大块内存拷贝部分（图像内存），后续使用移动拷贝实现。不用低效拷贝操作
 class hisiImage
 {
 public:
@@ -72,6 +70,18 @@ public:
     {
         memset(this, 0, sizeof(hisiImage));
     };
+    hisiImage(int w, int h, void *data, int type = 0)
+    { //默认type==0 单通道8bit
+        create(w, h, hiIVE_IMAGE_TYPE_E(type));
+        unsigned char *p = (unsigned char *)iveImg.au64VirAddr[0];
+        unsigned char *psrc = (unsigned char *)data;
+        for (int i = 0; i < h; i++)
+        {
+            memcpy(p, psrc, w);
+            p += iveImg.au32Stride[0];
+            psrc += w;
+        }
+    }
     hisiImage(const cv::Mat &cvSrc)
     {
         this->cloneFrom(cvSrc);
@@ -102,16 +112,6 @@ public:
     }
     IVE_IMAGE_S getIVEImage() const
     {
-        /*
-        IVE_IMAGE_S out;
-        memset(&out, 0, sizeof(IVE_IMAGE_S));
-        out.enType = type;
-        out.u32Height = height;
-        out.u32Width = width;
-        memcpy(out.au64VirAddr, au64VirAddr, 3 * sizeof(HI_U64));
-        memcpy(out.au64PhyAddr, au64PhyAddr, 3 * sizeof(HI_U64));
-        memcpy(out.au32Stride, au32Stride, 3 * sizeof(HI_U32));
-        return out;*/
         return iveImg;
     }
     IVE_DATA_S getIVEData() const
@@ -173,6 +173,18 @@ public:
     {
         create(input.iveImg.u32Width, input.iveImg.u32Height, type);
     }
+    void create(int w, int h, void *data, int type=0)
+    {
+        create(w, h, hiIVE_IMAGE_TYPE_E(type));
+        unsigned char *p = (unsigned char *)iveImg.au64VirAddr[0];
+        unsigned char *psrc = (unsigned char *)data;
+        for (int i = 0; i < h; i++)
+        {
+            memcpy(p, psrc, w);
+            p += iveImg.au32Stride[0];
+            psrc += w;
+        }
+    }
     void cloneFrom(const cv::Mat &src)
     {
         IVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1;
@@ -217,10 +229,18 @@ public:
     // HI_U32 au32Stride[3];  /* RW;The stride of the image */
 };
 
+bool writeColorBmpImage(const char *path, const hisiImage &src)
+{
+    IVE_IMAGE_S img = src.getIVEImage();
+    int ret = stbi_write_bmp(path, img.au32Stride[0], img.u32Height, 3, (void *)img.au64VirAddr[0]);
+}
+
 bool writeGrayBmpImage(const char *path, const hisiImage &src)
 {
     IVE_IMAGE_S img = src.getIVEImage();
     int ret = stbi_write_bmp(path, img.au32Stride[0], img.u32Height, 1, (void *)img.au64VirAddr[0]);
 }
-
+bool writeiveImage(const char*path,IVE_IMAGE_S src){
+    int ret = stbi_write_bmp(path, src.au32Stride[0], src.u32Height, 3, (void *)src.au64VirAddr[0]);
+}
 #endif
