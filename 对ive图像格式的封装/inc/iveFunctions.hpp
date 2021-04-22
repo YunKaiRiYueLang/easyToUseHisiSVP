@@ -202,7 +202,7 @@ namespace eive
     void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, signed char mask[25], int mode, int needblock)
     {
         CHECK_HISIIMAGE(src, 1920, 1024);
-        if (src.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || dstH.iveImg.enType != IVE_IMAGE_TYPE_S16C1 || dstV.iveImg.enType != IVE_IMAGE_TYPE_S16C1)
+        if (src.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || (dstH.iveImg.enType != IVE_IMAGE_TYPE_S16C1 && dstV.iveImg.enType != IVE_IMAGE_TYPE_S16C1))
         {
             errorCode("iveSobel input image format error", 0);
             return;
@@ -337,10 +337,10 @@ namespace eive
     }
 
 #define CHECK_IVE_IMAGE_SIZE_RET(w, h, minw, minh, maxw, maxh, false) \
-    if (w < minw || w > maxw || h < minh || h > maxh)                \
-    {                                                                \
-        errorCode("image size transcend", 0);                        \
-        return false;                                                \
+    if (w < minw || w > maxw || h < minh || h > maxh)                 \
+    {                                                                 \
+        errorCode("image size transcend", 0);                         \
+        return false;                                                 \
     }
 
 #define CHECK_STRIDE(stride, align, false)                   \
@@ -383,8 +383,8 @@ namespace eive
             CHECK_IVE_FUNCTION_RET("HI_MPI_IVE_CSC", s32ret, false);
             BLOCK_IVE_FUNCTION_RET(needBlock, cschandle, false);
         }
-            //需要check
-            break;
+        //需要check
+        break;
         case IVE_CSC_MODE_PIC_BT709_RGB2YUV:
             printf("待完善的函数\n");
             break;
@@ -393,4 +393,107 @@ namespace eive
             break;
         }
     }
+
+/**
+     * @brief 
+     * 
+     * @param src 
+     * @param dst 
+     * @param modex 
+     * @param needBlock 
+     * @return true 
+     * @return false 
+     */
+#define IVE_INTEG_MINW 32
+#define IVE_INTEG_MINH 16
+#define IVE_INTEG_MAXW 1920
+#define IVE_INTEG_MAXH 1080
+
+    bool iveInteg(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
+    {
+        CHECK_IVE_IMAGE_SIZE_RET(hisrc.iveImg.u32Width, hisrc.iveImg.u32Height,
+                                 IVE_INTEG_MINW, IVE_INTEG_MINH, IVE_INTEG_MAXW, IVE_INTEG_MAXH, false);
+        CHECK_IVE_IMAGE_SIZE_RET(hidst.iveImg.u32Width, hidst.iveImg.u32Height,
+                                 IVE_INTEG_MINW, IVE_INTEG_MINH, IVE_INTEG_MAXW, IVE_INTEG_MAXH, false);
+        CHECK_STRIDE(hisrc.iveImg.au32Stride[0], 16, fasle);
+        CHECK_STRIDE(hidst.iveImg.au32Stride[0], 16, fasle);
+        IVE_IMAGE_S ivesrc = hisrc.getIVEImage();
+        IVE_IMAGE_S ivedst = hidst.getIVEImage();
+        IVE_HANDLE integHandel;
+        IVE_INTEG_CTRL_S ctrl;
+        ctrl.enOutCtrl = (IVE_INTEG_OUT_CTRL_E)mode;
+        switch (IVE_INTEG_OUT_CTRL_E(mode))
+        {
+        case IVE_INTEG_OUT_CTRL_SUM:
+        {
+            int s32ret = HI_MPI_IVE_Integ(&integHandel, &ivesrc, &ivedst, &ctrl, (HI_BOOL)needBlock);
+            CHECK_IVE_FUNCTION_RET("HI_MPI_IVE_CSC", s32ret, false);
+            BLOCK_IVE_FUNCTION_RET(needBlock, integHandel, false);
+        }
+        break;
+        default:
+        {
+            printf("该计算方式未实现\n");
+            printf("已经实现：IVE_INTEG_OUT_CTRL_SUM\n");
+        }
+        break;
+        }
+        return true;
+    }
+
+#define IVE_16BitTo8Bit_MINW 16
+#define IVE_16BitTo8Bit_MINH 16
+#define IVE_INTEG_MAXW 1920
+#define IVE_INTEG_MAXH 1080
+    bool ive16BitTo8Bit(const hisiImage &hisisrc, hisiImage &hisidst, int mode, int needblock, unsigned short u16Denominator = 1, unsigned char u8Numerator = 1, signed char s8bias = 0)
+    {
+        if (s8bias < -128 || s8bias > 127)
+        {
+            printf("s8bias out of range\n");
+            return false;
+        }
+        if (u8Numerator < 0 || u8Numerator > 255)
+        {
+            printf("u8Numerator out of range\n");
+            return false;
+        }
+        if (((u16Denominator < u8Numerator) && (u16Denominator < 1)) || u16Denominator > 65535)
+        {
+            printf("u16Denominator out of range\n");
+            return false;
+        }
+        if (mode > 3)
+        {
+            printf("mode out of range\n");
+            return false;
+        }
+        if (hisisrc.iveImg.au32Stride[0] % 2 != 0)
+        {
+            printf("Address is not aligned with 2");
+            return false;
+        }
+        if ((hisisrc.iveImg.enType != IVE_IMAGE_TYPE_S16C1 && hisisrc.iveImg.enType != IVE_IMAGE_TYPE_U16C1) ||
+            (hisidst.iveImg.enType != IVE_IMAGE_TYPE_S8C1 && hisidst.iveImg.enType != IVE_IMAGE_TYPE_U8C1))
+        {
+            printf("image format error\n");
+            return false;
+        }
+        CHECK_IVE_IMAGE_SIZE_RET(hisisrc.iveImg.u32Width, hisisrc.iveImg.u32Height,
+                                 IVE_16BitTo8Bit_MINW, IVE_16BitTo8Bit_MINH, IVE_INTEG_MAXW, IVE_INTEG_MAXH, false);
+        CHECK_IVE_IMAGE_SIZE_RET(hisidst.iveImg.u32Width, hisidst.iveImg.u32Height,
+                                 IVE_16BitTo8Bit_MINW, IVE_16BitTo8Bit_MINH, IVE_INTEG_MAXW, IVE_INTEG_MAXH, false);
+        IVE_IMAGE_S ivesrc = hisisrc.getIVEImage();
+        IVE_IMAGE_S ivedst = hisidst.getIVEImage();
+        IVE_16BIT_TO_8BIT_CTRL_S ctrl;
+        ctrl.enMode = (IVE_16BIT_TO_8BIT_MODE_E)mode;
+        ctrl.s8Bias = s8bias;
+        ctrl.u16Denominator = u16Denominator;
+        ctrl.u8Numerator = u8Numerator;
+        IVE_HANDLE handle;
+        int s32ret = HI_MPI_IVE_16BitTo8Bit(&handle, &ivesrc, &ivedst, &ctrl, (HI_BOOL)needblock);
+        CHECK_IVE_FUNCTION_RET("HI_MPI_IVE_16BitTo8Bit", s32ret, false);
+        BLOCK_IVE_FUNCTION_RET(needblock, handle, false);
+        return true;
+    }
+
 }
