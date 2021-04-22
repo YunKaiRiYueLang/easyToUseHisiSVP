@@ -109,6 +109,18 @@ HI_S32 HI_CreateIveImage(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 
 		pstImage->au32Stride[2] = pstImage->au32Stride[0];
 	}
 	break;
+	case IVE_IMAGE_TYPE_S32C1:
+	case IVE_IMAGE_TYPE_U32C1:
+	{
+		unsigned int u32Size = pstImage->au32Stride[0] * pstImage->u32Height*sizeof(HI_U32);
+		int s32Ret = HI_MPI_SYS_MmzAlloc(&pstImage->au64PhyAddr[0], (HI_VOID **)&pstImage->au64VirAddr[0], NULL, HI_NULL, u32Size);
+		if (s32Ret != HI_SUCCESS)
+		{
+			SAMPLE_PRT("Mmz Alloc fail,Error(%#x)\n", s32Ret);
+			return s32Ret;
+		}
+	}
+	break;
 	default:
 	{
 		s32Succ = HI_FAILURE;
