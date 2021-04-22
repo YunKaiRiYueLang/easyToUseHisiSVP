@@ -51,7 +51,9 @@
   - [x] iveThresh  binary模式
   - [x] iveThresh16
   - [x] iveOrdStatFilter
-  - [x] iveCSC   封装IVE_CSC_MODE_PIC_BT709_YUV2RGB
+  - [x] iveCSC 封装IVE_CSC_MODE_PIC_BT709_YUV2RGB
+  - [x] iveInteg 
+  - [x] ive16BitTo8Bit
 - [ ] 完善智能指针，进一步优化内存管理
 
 代码会陆续整合。欢迎Star。
