@@ -69,6 +69,7 @@ public:
     hisiImage() : iveImg()
     {
         memset(this, 0, sizeof(hisiImage));
+        needFree = true;
     };
     hisiImage(int w, int h, void *data, int type = 0)
     { //默认type==0 单通道8bit
@@ -81,10 +82,12 @@ public:
             p += iveImg.au32Stride[0];
             psrc += w;
         }
+        needFree = true;
     }
     hisiImage(const cv::Mat &cvSrc)
     {
         this->cloneFrom(cvSrc);
+        needFree = true;
     }
     // hisiImage(int width,int height,int channel,hiIVE_IMAGE_TYPE_E type){
     // if(0==width||0==height||0==channel&&(type!=IVE_IMAGE_TYPE_U8C1))
@@ -92,7 +95,7 @@ public:
     // }
     ~hisiImage()
     {
-        if (0 != iveImg.u32Width)
+        if (0 != iveImg.u32Width && needFree)
         { //需要释放空间
             int i = 0;
             // do{
@@ -173,7 +176,7 @@ public:
     {
         create(input.iveImg.u32Width, input.iveImg.u32Height, type);
     }
-    void create(int w, int h, void *data, int type=0)
+    void create(int w, int h, void *data, int type = 0)
     {
         create(w, h, hiIVE_IMAGE_TYPE_E(type));
         unsigned char *p = (unsigned char *)iveImg.au64VirAddr[0];
@@ -220,6 +223,7 @@ public:
 
 public:
     IVE_IMAGE_S iveImg;
+    bool needFree;
     // int height;
     // int width;
     // int channel;
@@ -239,8 +243,19 @@ bool writeGrayBmpImage(const char *path, const hisiImage &src)
 {
     IVE_IMAGE_S img = src.getIVEImage();
     int ret = stbi_write_bmp(path, img.au32Stride[0], img.u32Height, 1, (void *)img.au64VirAddr[0]);
+    if (ret == 0)
+    {
+        printf("failed to write bmp image %d\n", ret);
+        printf("%s\n", path);
+    }
 }
-bool writeiveImage(const char*path,IVE_IMAGE_S src){
+bool writeiveImage(const char *path, IVE_IMAGE_S src)
+{
     int ret = stbi_write_bmp(path, src.au32Stride[0], src.u32Height, 3, (void *)src.au64VirAddr[0]);
+    if (ret == 0)
+    {
+        printf("failed to write bmp image %d\n", ret);
+        printf("%s\n", path);
+    }
 }
 #endif
