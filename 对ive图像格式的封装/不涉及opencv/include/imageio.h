@@ -4,7 +4,6 @@
 #include"hi_ive.h"
 
 class hisiImage;//类声明。
-#include"commonHeader.h"
 
 typedef struct
 {
