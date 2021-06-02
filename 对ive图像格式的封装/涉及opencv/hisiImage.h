@@ -12,46 +12,9 @@
 
 #include "commonHeader.h"
 
-#if !defined(STB_IMAGE_IMPLEMENTATION)
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#endif // STB_IMAGE_IMPLEMENTATION
+#include"imageio.h"
 
-#if !defined(STB_IMAGE_WRITE_IMPLEMENTATION)
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-#endif
 
-typedef struct
-{
-    int w;
-    int h;
-    int c;
-    unsigned char *data;
-} stbImageData;
-
-bool readGrayBmpImage(const char *path, stbImageData &image)
-{
-    int x, y, channels_in_file, desired_channels = 1;
-    image.data = stbi_load(path, &x, &y, &channels_in_file, desired_channels);
-    if (!image.data)
-    {
-        fprintf(stderr, "fail to read image: %s\n", path);
-        return false;
-    }
-    fprintf(stdout, "image: %s, x: %d, y: %d, channels_in_file: %d, desired_channels: %d\n",
-            path, x, y, channels_in_file, desired_channels);
-    image.w = x;
-    image.h = y;
-    image.c = 1;
-    printf("%s end\n", __FUNCTION__);
-    return true;
-}
-
-bool writeGrayBmpImage(const char *path, stbImageData &image)
-{
-    int ret = stbi_write_bmp(path, image.w, image.h, image.c, image.data);
-}
 #define IVE_MMZ_FREE(phy, vir)                                  \
     do                                                          \
     {                                                           \
@@ -127,6 +90,18 @@ public:
         ret.u64PhyAddr = iveImg.au64PhyAddr[0];
         return ret;
     }
+
+    void shallowCopy(hisiImage &cp)
+    {
+        this->needFree = false;
+        this->iveImg.enType = cp.iveImg.enType;
+        this->iveImg.u32Width = this->iveImg.u32Width;
+        this->iveImg.u32Height = this->iveImg.u32Height;
+        memcpy(this->iveImg.au32Stride, cp.iveImg.au32Stride, sizeof(HI_U32) * 3);
+        memcpy(this->iveImg.au64PhyAddr, cp.iveImg.au64PhyAddr, sizeof(HI_U64) * 3);
+        memcpy(this->iveImg.au64VirAddr, cp.iveImg.au64VirAddr, sizeof(HI_U64) * 3);
+    }
+
     void imread(const char *filePath, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
     {
         stbImageData img;
@@ -233,29 +208,5 @@ public:
     // HI_U32 au32Stride[3];  /* RW;The stride of the image */
 };
 
-bool writeColorBmpImage(const char *path, const hisiImage &src)
-{
-    IVE_IMAGE_S img = src.getIVEImage();
-    int ret = stbi_write_bmp(path, img.au32Stride[0], img.u32Height, 3, (void *)img.au64VirAddr[0]);
-}
 
-bool writeGrayBmpImage(const char *path, const hisiImage &src)
-{
-    IVE_IMAGE_S img = src.getIVEImage();
-    int ret = stbi_write_bmp(path, img.au32Stride[0], img.u32Height, 1, (void *)img.au64VirAddr[0]);
-    if (ret == 0)
-    {
-        printf("failed to write bmp image %d\n", ret);
-        printf("%s\n", path);
-    }
-}
-bool writeiveImage(const char *path, IVE_IMAGE_S src)
-{
-    int ret = stbi_write_bmp(path, src.au32Stride[0], src.u32Height, 3, (void *)src.au64VirAddr[0]);
-    if (ret == 0)
-    {
-        printf("failed to write bmp image %d\n", ret);
-        printf("%s\n", path);
-    }
-}
 #endif
