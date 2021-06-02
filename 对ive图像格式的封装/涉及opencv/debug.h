@@ -103,4 +103,9 @@
         return ret;                             \
     }
 
-    
+#define CHECK0_RET(str, code) \
+    if (0 != code)            \
+    {                         \
+        errorCode(str, code); \
+        return code;          \
+    }
