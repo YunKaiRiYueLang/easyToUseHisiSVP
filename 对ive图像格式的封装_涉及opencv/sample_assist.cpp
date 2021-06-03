@@ -10,8 +10,6 @@
 #include <time.h>
 #endif
 
-#include "debug.hpp"
-
 HI_U32 HI_CalcStride(HI_U32 u32Width, HI_U32 u32Align)
 {
 	HI_U32 u16stride = u32Width + (u32Align - u32Width % u32Align) % u32Align;
@@ -113,6 +111,7 @@ HI_S32 HI_CreateIveImage(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 
 	case IVE_IMAGE_TYPE_U32C1:
 	{
 		unsigned int u32Size = pstImage->au32Stride[0] * pstImage->u32Height*sizeof(HI_U32);
+		printf("mmz size:%d\n", u32Size);
 		int s32Ret = HI_MPI_SYS_MmzAlloc(&pstImage->au64PhyAddr[0], (HI_VOID **)&pstImage->au64VirAddr[0], NULL, HI_NULL, u32Size);
 		if (s32Ret != HI_SUCCESS)
 		{
