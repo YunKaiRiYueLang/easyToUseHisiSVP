@@ -10,7 +10,9 @@
 
 #include "time.h"
 
+#ifdef OPENCV_CORE_MAT_HPP
 #include "commonHeader.h"
+#endif
 
 #include"imageio.h"
 
@@ -47,11 +49,14 @@ public:
         }
         needFree = true;
     }
+    #ifdef OPENCV_CORE_MAT_HPP
+    // 如果使用了opencv核心库
     hisiImage(const cv::Mat &cvSrc)
     {
         this->cloneFrom(cvSrc);
         needFree = true;
     }
+    #endif
     // hisiImage(int width,int height,int channel,hiIVE_IMAGE_TYPE_E type){
     // if(0==width||0==height||0==channel&&(type!=IVE_IMAGE_TYPE_U8C1))
     //
