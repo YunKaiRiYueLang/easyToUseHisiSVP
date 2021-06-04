@@ -74,6 +74,8 @@ bool writeIveImage_jpg(const char *path, IVE_IMAGE_S src)
     return true;
 }
 
+#ifdef OPENCV_CORE_MAT_HPP
+
 /**
  * @brief change ive format image to opencv Mat format;
  * 
@@ -140,3 +142,4 @@ bool MatU8C1ImageToIve(const Mat &input, IVE_IMAGE_S &output)
     }
     return true;
 }
+#endif

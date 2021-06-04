@@ -14,8 +14,7 @@
 #include "commonHeader.h"
 #endif
 
-#include"imageio.h"
-
+#include "imageio.h"
 
 #define IVE_MMZ_FREE(phy, vir)                                  \
     do                                                          \
@@ -49,14 +48,14 @@ public:
         }
         needFree = true;
     }
-    #ifdef OPENCV_CORE_MAT_HPP
+#ifdef OPENCV_CORE_MAT_HPP
     // 如果使用了opencv核心库
     hisiImage(const cv::Mat &cvSrc)
     {
         this->cloneFrom(cvSrc);
         needFree = true;
     }
-    #endif
+#endif
     // hisiImage(int width,int height,int channel,hiIVE_IMAGE_TYPE_E type){
     // if(0==width||0==height||0==channel&&(type!=IVE_IMAGE_TYPE_U8C1))
     //
@@ -168,6 +167,8 @@ public:
             psrc += w;
         }
     }
+#ifdef OPENCV_CORE_MAT_HPP
+
     void cloneFrom(const cv::Mat &src)
     {
         IVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1;
@@ -200,7 +201,7 @@ public:
             psrc += width;
         }
     }
-
+#endif
 public:
     IVE_IMAGE_S iveImg;
     bool needFree;
@@ -212,6 +213,5 @@ public:
     // HI_U64 au64VirAddr[3]; /* RW;The virtual address of the image */
     // HI_U32 au32Stride[3];  /* RW;The stride of the image */
 };
-
 
 #endif
