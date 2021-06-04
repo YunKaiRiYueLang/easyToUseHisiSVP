@@ -1,5 +1,5 @@
-#ifndef __HISIIMAGE_H__
-#define __HISIIMAGE_H__
+#ifndef __SOLO_HISIIMAGE_H__
+#define __SOLO_HISIIMAGE_H__
 
 /*******************************hisi mpp头文件*************************************/
 #include "hi_comm_ive.h"
