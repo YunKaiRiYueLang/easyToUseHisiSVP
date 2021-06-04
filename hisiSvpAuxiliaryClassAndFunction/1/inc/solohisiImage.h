@@ -44,6 +44,7 @@ public:
     {
         if (0 != iveImg.u32Width)
         { //需要释放空间
+            int i = 0;
             IVE_MMZ_FREE(iveImg.au64PhyAddr[i], iveImg.au64VirAddr[i]);
         }
     };

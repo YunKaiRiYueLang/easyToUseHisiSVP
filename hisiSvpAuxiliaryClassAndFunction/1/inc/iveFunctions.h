@@ -15,7 +15,7 @@
 #include "hi_ive.h"
 #include "mpi_ive.h"
 
-#include "hisiImage.h"
+#include "solohisiImage.h"
 #include "debug.h"
 
 bool iveDMA2(IVE_DATA_S &src, IVE_DATA_S &dst, int mode, int needBlock);
