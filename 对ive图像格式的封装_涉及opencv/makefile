@@ -12,8 +12,8 @@ all:
 getlib:
 	$(c++) -c ./src/*.cpp $(inc)
 	$(ar) -crv libhisiUtils.a *.o
-	rm *.o
-	cp libhisiUtils.a ./lib;rm libhisiUtils.a 
+	mv *.o src/object
+	mv libhisiUtils.a lib -f
 
 clean:
 	rm -f *.a *.o
