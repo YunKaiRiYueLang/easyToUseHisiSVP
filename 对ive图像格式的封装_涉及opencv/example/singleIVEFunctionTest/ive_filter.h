@@ -8,7 +8,7 @@
 #include "mpi_sys.h"
 #include "sample_assist.h"
 
-#include "solohisiImage.h"
+#include "hisiImage.h"
 #include "time.h"
 /**
  * image type ，kernel，norm  fileName.

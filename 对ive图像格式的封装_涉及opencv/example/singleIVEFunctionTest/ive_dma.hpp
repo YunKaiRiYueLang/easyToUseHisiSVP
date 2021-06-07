@@ -1,5 +1,5 @@
 #pragma once
-#include "solohisiImage.h"
+#include "hisiImage.h"
 
 HI_VOID DMASample(hisiImage &src1, hisiImage &dst, IVE_DMA_CTRL_S &ctrl)
 {

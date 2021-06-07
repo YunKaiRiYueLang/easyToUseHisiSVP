@@ -19,7 +19,7 @@ using std::string;
 #include "ive_sub.hpp"
 #include "ive_dma.hpp"
 
-#include "solohisiImage.h"
+#include "hisiImage.h"
 
 void sobelExample();
 void SobelSampleBoth3x3();

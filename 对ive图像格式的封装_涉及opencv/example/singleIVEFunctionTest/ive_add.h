@@ -1,6 +1,6 @@
 #ifndef __IVE_ADD_H__
 #define __IVE_ADD_H__
-#include "solohisiImage.h"
+#include "hisiImage.h"
 #include <algorithm>
 #include <cstring>
 using namespace std;

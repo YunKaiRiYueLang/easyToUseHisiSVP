@@ -11,11 +11,10 @@
 #include"sample_define.h"
 
 
-#include "solohisiImage.h"
 #include "time.h"
 
 
-#include"solohisiImage.h"
+#include"hisiImage.h"
 // 原来的代码入书写方式总是难以阅读。
 void ThreshSample(IVE_THRESH_MODE_E enMode,HI_CHAR*fileName){
     /* defined variable */

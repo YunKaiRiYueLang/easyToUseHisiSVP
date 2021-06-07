@@ -1,5 +1,5 @@
 #pragma once
-#include"solohisiImage.h"
+#include"hisiImage.h"
 
 #include"hi_common.h"
 #include"unistd.h"

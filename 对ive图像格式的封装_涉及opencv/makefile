@@ -1,9 +1,10 @@
 c++:=arm-himix200-linux-g++
 ar:=arm-himix200-linux-ar
 root=../../../
+
 inc:=-I ./inc	\
 	-I$(root)Hi3516CV500_SDK_V2.0.2.0/smp/a7_linux/mpp/include	\
-	-I./ 
+	-I.
 
 # all 编译例子代码的示例
 all:
