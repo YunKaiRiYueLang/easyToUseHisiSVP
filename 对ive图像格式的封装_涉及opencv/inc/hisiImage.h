@@ -23,6 +23,14 @@
         }                                                       \
     } while (0)
 
+typedef struct
+{
+    int w;
+    int h;
+    int c;
+    unsigned char *data;
+} stbImageData;
+bool readGrayBmpImage(const char *path, stbImageData &image);
 int HI_CreateIveImage2(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 u32Width, HI_U32 u32Height, HI_U32 u32Stride);
 //目前只写用到的。涉及大块内存拷贝部分（图像内存），后续使用移动拷贝实现。不用低效拷贝操作
 class hisiImage
@@ -206,15 +214,6 @@ public:
     bool needFree = true;
 };
 
-typedef struct
-{
-    int w;
-    int h;
-    int c;
-    unsigned char *data;
-} stbImageData;
-
-bool readGrayBmpImage(const char *path, stbImageData &image);
 bool writeGrayBmpImage(const char *path, stbImageData &image);
 bool writeGrayBmpImage(const char *path, const hisiImage &src);
 bool writeColorBmpImage(const char *path, const hisiImage &src);

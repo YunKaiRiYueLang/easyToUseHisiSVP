@@ -9,7 +9,7 @@
 #else
 #include <time.h>
 #endif
-
+#include"debug.h"//试了自己定义的宏
 HI_U32 HI_CalcStride(HI_U32 u32Width, HI_U32 u32Align)
 {
 	HI_U32 u16stride = u32Width + (u32Align - u32Width % u32Align) % u32Align;
