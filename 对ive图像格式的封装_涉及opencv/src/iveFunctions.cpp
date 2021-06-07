@@ -11,7 +11,7 @@ void theChosenGauss(hisiImage &src, hisiImage &dst)
     HI_U8 norm = 8;
     int needBlock = 1;
     // doIveFilter(hiSrc,hiDst,mask,norm,needBlock)
-    eive::iveFilter(src, dst, mask, norm, needBlock);
+    iveFilter(src, dst, mask, norm, needBlock);
 }
 bool iveDMA2(IVE_DATA_S &src, IVE_DATA_S &dst, int mode, int needBlock)
 {
@@ -374,9 +374,6 @@ void iveOrdStatFilter(const hisiImage &hisrc, hisiImage &hidst, int mode, int ne
     BLOCK_IVE_FUNCTION(needBlock, osfHandle);
 }
 
-
-
-
 /**
      * @brief 
      * 
@@ -472,7 +469,7 @@ bool iveInteg(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
 #define IVE_16BitTo8Bit_MINH 16
 #define IVE_INTEG_MAXW 1920
 #define IVE_INTEG_MAXH 1080
-bool ive16BitTo8Bit(const hisiImage &hisisrc, hisiImage &hisidst, int mode, int needblock, unsigned short u16Denominator = 1, unsigned char u8Numerator = 1, signed char s8bias = 0)
+bool ive16BitTo8Bit(const hisiImage &hisisrc, hisiImage &hisidst, int mode, int needblock, unsigned short u16Denominator, unsigned char u8Numerator, signed char s8bias)
 {
     if (s8bias < -128 || s8bias > 127)
     {

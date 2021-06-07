@@ -374,9 +374,6 @@ void iveOrdStatFilter(const hisiImage &hisrc, hisiImage &hidst, int mode, int ne
     BLOCK_IVE_FUNCTION(needBlock, osfHandle);
 }
 
-
-
-
 /**
      * @brief 
      * 
