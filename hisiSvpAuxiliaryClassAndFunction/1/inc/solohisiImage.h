@@ -1,14 +1,12 @@
 #ifndef __SOLO_HISIIMAGE_H__
 #define __SOLO_HISIIMAGE_H__
 
-/*******************************hisi mpp头文件*************************************/
 #include "hi_comm_ive.h"
 #include "hi_comm_sys.h"
 #include "hi_ive.h"
 #include "mpi_ive.h"
 #include "mpi_sys.h"
 #include "sample_assist.h"
-/********************************************************************/
 
 #define IVE_MMZ_FREE(phy, vir)                                  \
     do                                                          \

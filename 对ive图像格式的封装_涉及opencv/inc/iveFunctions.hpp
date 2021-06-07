@@ -35,7 +35,6 @@ void iveOrdStatFilter(const hisiImage &hisrc, hisiImage &hidst, int mode, int ne
 bool iveCSC(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock);
 bool iveInteg(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock);
 bool ive16BitTo8Bit(const hisiImage &hisisrc, hisiImage &hisidst, int mode, int needblock, unsigned short u16Denominator = 1, unsigned char u8Numerator = 1, signed char s8bias = 0);
-
 #define CHECK_IVE_IMAGE_SIZE_RET(w, h, minw, minh, maxw, maxh, false) \
     if (w < minw || w > maxw || h < minh || h > maxh)                 \
     {                                                                 \
