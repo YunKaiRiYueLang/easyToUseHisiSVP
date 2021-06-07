@@ -1,5 +1,3 @@
-#include "imageio.h"
-
 #if !defined(STB_IMAGE_IMPLEMENTATION)
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -10,7 +8,6 @@
 #include "stb_image_write.h"
 #endif
 #include "hi_ive.h"
-
 #include "hisiImage.h"
 
 bool readGrayBmpImage(const char *path, stbImageData &image)
@@ -50,6 +47,32 @@ bool writeGrayBmpImage(const char *path, const hisiImage &src)
         printf("failed to write bmp image %d\n", ret);
         printf("%s\n", path);
     }
+}
+int HI_CreateIveImage2(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 u32Width, HI_U32 u32Height, HI_U32 u32Stride)
+{
+    pstImage->enType = enType;
+    pstImage->u32Width = u32Width;
+    pstImage->u32Height = u32Height;
+    pstImage->au32Stride[0] = u32Stride;
+    switch (enType)
+    {
+    case IVE_IMAGE_TYPE_U8C1:
+    case IVE_IMAGE_TYPE_S8C1:
+    {
+        int ret = HI_MPI_SYS_MmzAlloc(&pstImage->au64PhyAddr[0], (HI_VOID **)&(pstImage->au64VirAddr[0]),
+                                      HI_NULL, HI_NULL, u32Stride * u32Height);
+        if (ret != 0)
+        {
+            printf("error code :%x\n", ret);
+            return ret;
+        }
+        break;
+    }
+
+    default:
+        return -1;
+    }
+    return 0;
 }
 bool writeiveImage(const char *path, IVE_IMAGE_S src)
 {

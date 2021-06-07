@@ -9,13 +9,9 @@
 #include "sample_assist.h"
 
 #include "time.h"
-
 #ifdef OPENCV_CORE_MAT_HPP
 #include "commonHeader.h"
 #endif
-
-#include "imageio.h"
-
 #define IVE_MMZ_FREE(phy, vir)                                  \
     do                                                          \
     {                                                           \
@@ -27,13 +23,14 @@
         }                                                       \
     } while (0)
 
+int HI_CreateIveImage2(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 u32Width, HI_U32 u32Height, HI_U32 u32Stride);
+//目前只写用到的。涉及大块内存拷贝部分（图像内存），后续使用移动拷贝实现。不用低效拷贝操作
 class hisiImage
 {
 public:
     hisiImage() : iveImg()
     {
         memset(this, 0, sizeof(hisiImage));
-        needFree = true;
     };
     hisiImage(int w, int h, void *data, int type = 0)
     { //默认type==0 单通道8bit
@@ -46,28 +43,14 @@ public:
             p += iveImg.au32Stride[0];
             psrc += w;
         }
-        needFree = true;
+        needFree = false;
     }
-#ifdef OPENCV_CORE_MAT_HPP
-    // 如果使用了opencv核心库
-    hisiImage(const cv::Mat &cvSrc)
-    {
-        this->cloneFrom(cvSrc);
-        needFree = true;
-    }
-#endif
-    // hisiImage(int width,int height,int channel,hiIVE_IMAGE_TYPE_E type){
-    // if(0==width||0==height||0==channel&&(type!=IVE_IMAGE_TYPE_U8C1))
-    //
-    // }
     ~hisiImage()
     {
         if (0 != iveImg.u32Width && needFree)
         { //需要释放空间
             int i = 0;
-            // do{
             IVE_MMZ_FREE(iveImg.au64PhyAddr[i], iveImg.au64VirAddr[i]);
-            // } while (i<channel);    //attention: need loop or not?
         }
     };
     void getIVEImage(IVE_IMAGE_S &out)
@@ -130,7 +113,7 @@ public:
             psrc += img.w;
         }
     };
-    inline void create(int w, int h, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
+    void create(int w, int h, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
     {
         int s32Result = HI_CreateIveImage(&iveImg, type, w, h);
         if (0 != s32Result)
@@ -139,6 +122,17 @@ public:
             return;
         }
     };
+    bool create(int w, int h, int s, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
+    {
+        //跨度s由使用者保证。
+        int s32ret = HI_CreateIveImage2(&iveImg, type, w, h, s);
+        if (0 != s32ret)
+        {
+            printf("创建图像错误 error code:%x\n", s32ret);
+            return false;
+        }
+        return true;
+    }
     void create(const hisiImage &input)
     {
         int s32Result = HI_CreateIveImage(&iveImg, input.iveImg.enType, input.iveImg.au32Stride[0], input.iveImg.u32Height);
@@ -168,7 +162,11 @@ public:
         }
     }
 #ifdef OPENCV_CORE_MAT_HPP
-
+    hisiImage(const cv::Mat &cvSrc)
+    {
+        this->cloneFrom(cvSrc);
+        needFree = true;
+    }
     void cloneFrom(const cv::Mat &src)
     {
         IVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1;
@@ -202,19 +200,11 @@ public:
         }
     }
 #endif
+
 public:
     IVE_IMAGE_S iveImg;
-    bool needFree;
-    // int height;
-    // int width;
-    // int channel;
-    // hiIVE_IMAGE_TYPE_E type;
-    // HI_U64 au64PhyAddr[3]; /* RW;The physical address of the image */
-    // HI_U64 au64VirAddr[3]; /* RW;The virtual address of the image */
-    // HI_U32 au32Stride[3];  /* RW;The stride of the image */
+    bool needFree = true;
 };
-
-
 
 typedef struct
 {
@@ -226,8 +216,8 @@ typedef struct
 
 bool readGrayBmpImage(const char *path, stbImageData &image);
 bool writeGrayBmpImage(const char *path, stbImageData &image);
-bool writeColorBmpImage(const char *path, const hisiImage &src);
 bool writeGrayBmpImage(const char *path, const hisiImage &src);
+bool writeColorBmpImage(const char *path, const hisiImage &src);
 bool writeiveImage(const char *path, IVE_IMAGE_S src);
 bool writeIveImage_jpg(const char *path, IVE_IMAGE_S src);
 #ifdef OPENCV_CORE_MAT_HPP
