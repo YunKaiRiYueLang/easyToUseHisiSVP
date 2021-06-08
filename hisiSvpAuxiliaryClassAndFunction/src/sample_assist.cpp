@@ -28,7 +28,7 @@ HI_S32 HI_CreateIveImage(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 
 
 	u32Stride = HI_CalcStride(u32Width, HI_IVE2_STRIDE_ALIGN);
 	s32Succ = HI_SUCCESS;
-
+	pstImage->au32Stride[0] = u32Stride;
 	switch (enType)
 	{
 	case IVE_IMAGE_TYPE_U8C1:
