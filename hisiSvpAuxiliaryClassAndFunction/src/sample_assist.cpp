@@ -9,7 +9,7 @@
 #else
 #include <time.h>
 #endif
-#include"debug.h"//试了自己定义的宏
+#include "debug.h" //试了自己定义的宏
 HI_U32 HI_CalcStride(HI_U32 u32Width, HI_U32 u32Align)
 {
 	HI_U32 u16stride = u32Width + (u32Align - u32Width % u32Align) % u32Align;
@@ -29,6 +29,11 @@ HI_S32 HI_CreateIveImage(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 
 	u32Stride = HI_CalcStride(u32Width, HI_IVE2_STRIDE_ALIGN);
 	s32Succ = HI_SUCCESS;
 	pstImage->au32Stride[0] = u32Stride;
+	if (pstImage->au32Stride[0] == 0||pstImage->u32Height==0)
+	{
+		printf("s h为0，无法创建图像 s h:%d %d\n", pstImage->au32Stride[0], pstImage->u32Height);
+		return -1;
+	}
 	switch (enType)
 	{
 	case IVE_IMAGE_TYPE_U8C1:
@@ -109,7 +114,7 @@ HI_S32 HI_CreateIveImage(IVE_IMAGE_S *pstImage, IVE_IMAGE_TYPE_E enType, HI_U32 
 	case IVE_IMAGE_TYPE_S32C1:
 	case IVE_IMAGE_TYPE_U32C1:
 	{
-		unsigned int u32Size = pstImage->au32Stride[0] * pstImage->u32Height*sizeof(HI_U32);
+		unsigned int u32Size = pstImage->au32Stride[0] * pstImage->u32Height * sizeof(HI_U32);
 		printf("mmz size:%d\n", u32Size);
 		int s32Ret = HI_MPI_SYS_MmzAlloc(&pstImage->au64PhyAddr[0], (HI_VOID **)&pstImage->au64VirAddr[0], NULL, HI_NULL, u32Size);
 		if (s32Ret != HI_SUCCESS)

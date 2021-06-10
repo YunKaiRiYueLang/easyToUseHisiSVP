@@ -39,6 +39,7 @@ public:
     hisiImage() : iveImg()
     {
         memset(this, 0, sizeof(hisiImage));
+        needFree = false;
     };
     hisiImage(int w, int h, void *data, int type = 0)
     { //默认type==0 单通道8bit
@@ -70,6 +71,7 @@ public:
         memcpy(out.au64VirAddr, iveImg.au64VirAddr, 3 * sizeof(HI_U64));
         memcpy(out.au64PhyAddr, iveImg.au64PhyAddr, 3 * sizeof(HI_U64));
         memcpy(out.au32Stride, iveImg.au32Stride, 3 * sizeof(HI_U32));
+        needFree = false;
     }
     IVE_IMAGE_S getIVEImage() const
     {
@@ -107,6 +109,8 @@ public:
         };
         printf("读图成功\n");
         int s32Result = HI_CreateIveImage(&iveImg, IVE_IMAGE_TYPE_U8C1, img.w, img.h);
+        needFree = true;
+        
         if (0 != s32Result)
         {
             printf("创建图像错误\n");
@@ -124,6 +128,7 @@ public:
     void create(int w, int h, hiIVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1)
     {
         int s32Result = HI_CreateIveImage(&iveImg, type, w, h);
+        needFree = true;
         if (0 != s32Result)
         {
             printf("创建图像错误 error code:%x\n", s32Result);
@@ -134,6 +139,7 @@ public:
     {
         //跨度s由使用者保证。
         int s32ret = HI_CreateIveImage2(&iveImg, type, w, h, s);
+        needFree = true;
         if (0 != s32ret)
         {
             printf("创建图像错误 error code:%x\n", s32ret);
@@ -144,6 +150,7 @@ public:
     void create(const hisiImage &input)
     {
         int s32Result = HI_CreateIveImage(&iveImg, input.iveImg.enType, input.iveImg.au32Stride[0], input.iveImg.u32Height);
+        needFree = true;
         if (0 != s32Result)
         {
             printf("创建图像错误 error code:%x\n", s32Result);
@@ -179,6 +186,7 @@ public:
     {
         IVE_IMAGE_TYPE_E type = IVE_IMAGE_TYPE_U8C1;
         int s32ret = HI_CreateIveImage(&iveImg, type, src.cols, src.rows);
+        needFree = true;
         if (0 != s32ret)
         {
             printf("创建图像错误 error code:%x\n", s32ret);
