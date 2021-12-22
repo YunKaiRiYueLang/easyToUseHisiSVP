@@ -5,12 +5,15 @@
 包含了待整理合并的两个海思类
 
 ## 使用简要说明
-
 1. 海思ive函数耗时记录，在 [**耗时数据.md**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/blob/main/%E8%80%97%E6%97%B6%E6%95%B0%E6%8D%AE.md) 里。
 2. ~~测试用的代码，在[**testcode**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/tree/main/testcode/ive%E6%97%B6%E9%97%B4%E6%B5%8B%E8%AF%95)文件夹里。~~
 3. 对ive图像格式的封装，仅支持8bit单通道类型，[**封装代码**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/tree/main/%E5%AF%B9ive%E5%9B%BE%E5%83%8F%E6%A0%BC%E5%BC%8F%E7%9A%84%E5%B0%81%E8%A3%85)。
 
 4. 编程指南：正确使用svp的关键点.md 目前写了ive使用注意事项
+
+## 函数库的编译
+
+源码位于 hisiSvpAuxiliaryClassAndFunction文件夹中,修改这个目录下的makefile,就能使用自己的sdk编译整理好了函数库了.
 ## hisiImage类的使用
 
 在文件夹 **对ive图像格式的封装** 中包含了对ive图像格式封装的源码。不使用opencv则不必使用 **cvive.hpp**
