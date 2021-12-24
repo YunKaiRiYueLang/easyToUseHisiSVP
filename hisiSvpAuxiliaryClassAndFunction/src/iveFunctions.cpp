@@ -343,10 +343,10 @@ void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &c
      */
 void iveFilter(const hisiImage &hisrc, hisiImage &hidst, signed char mask[25], unsigned char norm, int needBlock)
 {
+    CHECK_HISIIMAGE(hisrc,1920,1024);
+    CHECK_HISIIMAGE(hidst,1920,1024);
     IVE_IMAGE_S src = hisrc.getIVEImage();
-    CHECK_HISIIMAGE(src,1920,1024);
     IVE_IMAGE_S dst = hidst.getIVEImage();
-    CHECK_HISIIMAGE(dst,1920,1024);
     IVE_HANDLE filterHandle;
     IVE_FILTER_CTRL_S ctrl;
     memcpy(ctrl.as8Mask, mask, 25);
