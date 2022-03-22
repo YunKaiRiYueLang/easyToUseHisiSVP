@@ -52,7 +52,7 @@
   - [x] iveSobel
   - [x] iveFilter
   - [x] iveSub
-  - [x] iveThresh  binary模式
+  - [x] iveThresh  可以进行binary模式 trunc模式
   - [x] iveThresh16
   - [x] iveOrdStatFilter
   - [x] iveCSC 封装IVE_CSC_MODE_PIC_BT709_YUV2RGB
