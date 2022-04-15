@@ -389,6 +389,8 @@ bool iveCSC(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
 
     CHECK_IVE_IMAGE_SIZE_RET(hisrc.iveImg.u32Width, hisrc.iveImg.u32Height, 64, 64, 1920, 1920, false);
     CHECK_IVE_IMAGE_SIZE_RET(hidst.iveImg.u32Width, hidst.iveImg.u32Height, 64, 64, 1920, 1920, false);
+    IVE_CSC_CTRL_S cscCtrl;
+    cscCtrl.enMode = (IVE_CSC_MODE_E)mode;
     switch ((IVE_CSC_MODE_E)mode)
     {
     case IVE_CSC_MODE_PIC_BT709_YUV2RGB:
@@ -404,16 +406,18 @@ bool iveCSC(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
         IVE_IMAGE_S ivesrc = hisrc.getIVEImage();
         IVE_IMAGE_S ivedst = hidst.getIVEImage();
         IVE_HANDLE cschandle;
-        IVE_CSC_CTRL_S cscCtrl;
-        cscCtrl.enMode = IVE_CSC_MODE_PIC_BT709_YUV2RGB;
         int s32ret = HI_MPI_IVE_CSC(&cschandle, &ivesrc, &ivedst, &cscCtrl, (HI_BOOL)needBlock);
         CHECK_IVE_FUNCTION_RET("HI_MPI_IVE_CSC", s32ret, false);
         BLOCK_IVE_FUNCTION_RET(needBlock, cschandle, false);
     }
-    //需要check
-    break;
+        break;
     case IVE_CSC_MODE_PIC_BT709_RGB2YUV:
-        printf("待完善的函数\n");
+        IVE_IMAGE_S ivesrc = hisrc.getIVEImage();
+        IVE_IMAGE_S ivedst = hidst.getIVEImage();
+        IVE_HANDLE cschandle;
+        int s32ret = HI_MPI_IVE_CSC(&cschandle, &ivesrc, &ivedst, &cscCtrl, (HI_BOOL)needBlock);
+        CHECK_IVE_FUNCTION_RET("HI_MPI_IVE_CSC", s32ret, false);
+        BLOCK_IVE_FUNCTION_RET(needBlock, cschandle, false);
         break;
     default:
         printf("待完善的函数\n");
