@@ -11,7 +11,13 @@
 
 ## 编译
 
+### 方式1
+
 源码位于 hisiSvpAuxiliaryClassAndFunction文件夹中,修改这个目录下的makefile,就能使用自己的sdk编译整理好了函数库了.
+
+### 方式2
+直接将inc和src的文件拷贝过去用好了.
+
 ## hisiImage类的使用
 
 在文件夹 **对ive图像格式的封装** 中包含了对ive图像格式封装的源码。不使用opencv则不必使用 **cvive.hpp**
