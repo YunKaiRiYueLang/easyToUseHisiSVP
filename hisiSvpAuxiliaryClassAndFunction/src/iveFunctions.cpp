@@ -18,7 +18,7 @@ bool iveDMA2(IVE_DATA_S &src, IVE_DATA_S &dst, int mode, int needBlock)
 
     IVE_HANDLE handle;
     IVE_DMA_CTRL_S ctrl;
-    //1 byte 32x1～1920x1080
+    // 1 byte 32x1～1920x1080
     if (src.u32Height < 1 || src.u32Height > 1080 || src.u32Width < 32 || src.u32Width > 1920)
     {
         printf("function: %s,line: %d,图像尺寸超出范围,需要为32x1～1920x1080,输入的为src w %d h %d s %d dst w %d h %d s %d\n",
@@ -166,6 +166,7 @@ void iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const 
 }
 bool iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const unsigned short x, const unsigned short y, const HI_BOOL bInstant)
 {
+#ifdef DEBUG
     if (src1.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || src2.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || dst.iveImg.enType != IVE_IMAGE_TYPE_U8C1)
     {
         errorCode("iveAdd input image format error", 0);
@@ -177,6 +178,7 @@ bool iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const 
         errorCode("siez error src dst !=", 0);
         return false;
     }
+#endif
     IVE_ADD_CTRL_S pstAddCtrl;
     pstAddCtrl.u0q16X = x;
     pstAddCtrl.u0q16Y = y;
@@ -185,11 +187,13 @@ bool iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const 
     IVE_IMAGE_S img2 = src2.getIVEImage();
     IVE_IMAGE_S img3 = dst.getIVEImage();
     int s32ret = HI_MPI_IVE_Add(&handle, &img1, &img2, &img3, &pstAddCtrl, bInstant);
+#ifdef DEBUG
     if (0 != s32ret)
     {
         printf("HI_MPI_IVE_Add error occured,code:%x\n", s32ret);
         return false;
     }
+#endif
     if (bInstant)
     {
         HI_BOOL finish;
@@ -208,6 +212,7 @@ bool iveAdd(const hisiImage &src1, const hisiImage &src2, hisiImage &dst, const 
 }
 void iveSub(const hisiImage &hisrc1, const hisiImage &hisrc2, hisiImage &hidst, int mode, int needBlock)
 {
+#ifdef DEBUG
     if (hisrc1.iveImg.enType != IVE_IMAGE_TYPE_U8C1 || hisrc2.iveImg.enType != IVE_IMAGE_TYPE_U8C1)
     {
         errorCode("iveSub input image format error", 0);
@@ -223,7 +228,7 @@ void iveSub(const hisiImage &hisrc1, const hisiImage &hisrc2, hisiImage &hidst, 
         errorCode("iveSub dst image format error", 0);
         return;
     }
-
+#endif
     IVE_IMAGE_S src1 = hisrc1.getIVEImage();
     IVE_IMAGE_S src2 = hisrc2.getIVEImage();
     IVE_IMAGE_S dst = hidst.getIVEImage();
@@ -231,7 +236,9 @@ void iveSub(const hisiImage &hisrc1, const hisiImage &hisrc2, hisiImage &hidst, 
     ctrl.enMode = (IVE_SUB_MODE_E)mode;
     IVE_HANDLE subHandle;
     int s32Ret = HI_MPI_IVE_Sub(&subHandle, &src1, &src2, &dst, &ctrl, (HI_BOOL)needBlock);
+#ifdef DEBUG
     CHECK_IVE_FUNCTION("HI_MPI_IVE_Sub", s32Ret);
+#endif
     BLOCK_IVE_FUNCTION(needBlock, subHandle);
 }
 // 不需要的输出可以是空图像
@@ -282,16 +289,16 @@ void iveSobel(const hisiImage &src, hisiImage &dstH, hisiImage &dstV, IVE_SOBEL_
 }
 
 /**
-     * @brief 
-     * 
-     * @param src 
-     * @param dst   
-     * @param thrV 
-     * @param minV 
-     * @param maxV 
-     * @param mode 
-     * @param needBlock 
-     */
+ * @brief
+ *
+ * @param src
+ * @param dst
+ * @param thrV
+ * @param minV
+ * @param maxV
+ * @param mode
+ * @param needBlock
+ */
 void iveThresh(const hisiImage &src, hisiImage &dst, unsigned char thrV, unsigned char minV, unsigned char maxV, int mode, int needBlock)
 {
     IVE_THRESH_CTRL_S threshCtrl;
@@ -303,10 +310,40 @@ void iveThresh(const hisiImage &src, hisiImage &dst, unsigned char thrV, unsigne
     IVE_IMAGE_S iveSrc = src.getIVEImage();
     IVE_IMAGE_S iveDst = dst.getIVEImage();
     int s32ret = HI_MPI_IVE_Thresh(&threshHandle, &iveSrc, &iveDst, &threshCtrl, (HI_BOOL)needBlock);
+#ifdef DEBUG
     CHECK_IVE_FUNCTION("HI_MPI_IVE_Thresh", s32ret);
+#endif
     BLOCK_IVE_FUNCTION(needBlock, threshHandle);
 }
 
+/**
+ * @brief
+ *
+ * @param src
+ * @param dst
+ * @param thrV
+ * @param minV
+ * @param maxV
+ * @param mode
+ * @param needBlock
+ */
+void iveThresh2(const hisiImage &src, hisiImage &dst, unsigned char lowTh, unsigned char highTh, unsigned char midV, unsigned char maxV, int mode, int needBlock)
+{
+    IVE_THRESH_CTRL_S threshCtrl;
+    threshCtrl.enMode = (IVE_THRESH_MODE_E)mode;
+    threshCtrl.u8LowThr = lowTh;
+    threshCtrl.u8HighThr = highTh;
+    threshCtrl.u8MaxVal = maxV;
+    threshCtrl.u8MidVal = midV;
+    IVE_HANDLE threshHandle;
+    IVE_IMAGE_S iveSrc = src.getIVEImage();
+    IVE_IMAGE_S iveDst = dst.getIVEImage();
+    int s32ret = HI_MPI_IVE_Thresh(&threshHandle, &iveSrc, &iveDst, &threshCtrl, (HI_BOOL)needBlock);
+#ifdef DEBUG
+    CHECK_IVE_FUNCTION("HI_MPI_IVE_Thresh", s32ret);
+#endif
+    BLOCK_IVE_FUNCTION(needBlock, threshHandle);
+}
 /*控制参数太多，先保留ive类型的控制参数*/
 void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &ctrl, HI_BOOL needblock)
 {
@@ -338,32 +375,37 @@ void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &c
 }
 
 /**
-     * @brief 根据不同的模板系数，实现不同的滤波
-     * 
-     */
+ * @brief 根据不同的模板系数，实现不同的滤波
+ *
+ */
 void iveFilter(const hisiImage &hisrc, hisiImage &hidst, signed char mask[25], unsigned char norm, int needBlock)
 {
-    CHECK_HISIIMAGE(hisrc,1920,1024);
-    CHECK_HISIIMAGE(hidst,1920,1024);
+#ifdef DEBUG
+    CHECK_HISIIMAGE(hisrc, 1920, 1024);
+    CHECK_HISIIMAGE(hidst, 1920, 1024);
+#endif
     IVE_IMAGE_S src = hisrc.getIVEImage();
     IVE_IMAGE_S dst = hidst.getIVEImage();
     IVE_HANDLE filterHandle;
     IVE_FILTER_CTRL_S ctrl;
+
     memcpy(ctrl.as8Mask, mask, 25);
     ctrl.u8Norm = norm;
     int s32Result = HI_MPI_IVE_Filter(&filterHandle, &src, &dst, &ctrl, (HI_BOOL)needBlock);
+#ifdef DEBUG
     CHECK_IVE_FUNCTION("HI_MPI_IVE_Filter", s32Result);
+#endif
     BLOCK_IVE_FUNCTION(needBlock, filterHandle);
 }
 
 /**
-     * @brief 
-     * 
-     * @param hisrc 
-     * @param hidst 
-     * @param mode 
-     * @param needBlock 
-     */
+ * @brief
+ *
+ * @param hisrc
+ * @param hidst
+ * @param mode
+ * @param needBlock
+ */
 void iveOrdStatFilter(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
 {
     IVE_IMAGE_S src = hisrc.getIVEImage();
@@ -377,13 +419,13 @@ void iveOrdStatFilter(const hisiImage &hisrc, hisiImage &hidst, int mode, int ne
 }
 
 /**
-     * @brief 
-     * 
-     * @param hisrc 
-     * @param hidst 
-     * @param modex 
-     * @param needBlock 
-     */
+ * @brief
+ *
+ * @param hisrc
+ * @param hidst
+ * @param modex
+ * @param needBlock
+ */
 bool iveCSC(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
 {
 
@@ -426,15 +468,15 @@ bool iveCSC(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
 }
 
 /**
-     * @brief 
-     * 
-     * @param src 
-     * @param dst 
-     * @param modex 
-     * @param needBlock 
-     * @return true 
-     * @return false 
-     */
+ * @brief
+ *
+ * @param src
+ * @param dst
+ * @param modex
+ * @param needBlock
+ * @return true
+ * @return false
+ */
 #define IVE_INTEG_MINW 32
 #define IVE_INTEG_MINH 16
 #define IVE_INTEG_MAXW 1920
