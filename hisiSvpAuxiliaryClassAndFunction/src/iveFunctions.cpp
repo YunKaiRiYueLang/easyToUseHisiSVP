@@ -324,7 +324,7 @@ void iveThresh(const hisiImage &src, hisiImage &dst, unsigned char thrV, unsigne
  * @param thrV
  * @param minV
  * @param maxV
- * @param mode
+ * @param mode  IVE_THRESH_MODE_ORI_MID_MAX ONLY
  * @param needBlock
  */
 void iveThresh2(const hisiImage &src, hisiImage &dst, unsigned char lowTh, unsigned char highTh, unsigned char midV, unsigned char maxV, int mode, int needBlock)
