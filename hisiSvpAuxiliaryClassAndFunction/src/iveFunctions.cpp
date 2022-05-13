@@ -352,13 +352,27 @@ void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &c
         errorCode("iveThreshS16 input image format error\n input src must be IVE_IMAGE_TYPE_S16C1", 0);
         return;
     }
+    if(dst.iveImg.enType!=IVE_IMAGE_TYPE_S8C1&&dst.iveImg.enType!=IVE_IMAGE_TYPE_U8C1){
+        errorCode("iveThreshS16 input image format error\n input src must be IVE_IMAGE_TYPE_U8C1/S8C1", 0);
+        return;
+    }
+    if(src.iveImg.u32Width<64||src.iveImg.u32Height<64||src.iveImg.u32Width>1920||src.iveImg.u32Height>1080){
+        printf("src 图像尺寸 不合格 w h  : %d %d ",src.iveImg.u32Width,src.iveImg.u32Height);
+    }
+    if(dst.iveImg.u32Width<64||dst.iveImg.u32Height<64||dst.iveImg.u32Width>1920||dst.iveImg.u32Height>1080){
+        printf("dst 图像尺寸 不合格");
+    }
+    if(dst.iveImg.u32Width!=src.iveImg.u32Width||dst.iveImg.u32Height!=src.iveImg.u32Height){
+        printf("srt dst 分辨率不一致");
+    }
+
     IVE_IMAGE_S stSrc = src.getIVEImage();
     IVE_IMAGE_S stDst = dst.getIVEImage();
     IVE_HANDLE handle;
     int s32Result = HI_MPI_IVE_Thresh_S16(&handle, &stSrc, &stDst, &ctrl, needblock);
     if (0 != s32Result)
     {
-        printf("\033[31m line %d HI_MPI_IVE_Sobel %x \n\033[0m", __LINE__, s32Result);
+        printf("\033[31m line %d HI_MPI_IVE_Thresh_S16 %x \n\033[0m", __LINE__, s32Result);
         return;
     }
     if (needblock)
