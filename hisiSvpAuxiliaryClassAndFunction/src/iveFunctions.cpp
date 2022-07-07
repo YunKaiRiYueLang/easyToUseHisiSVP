@@ -352,17 +352,21 @@ void iveThreshS16(const hisiImage &src, hisiImage &dst, IVE_THRESH_S16_CTRL_S &c
         errorCode("iveThreshS16 input image format error\n input src must be IVE_IMAGE_TYPE_S16C1", 0);
         return;
     }
-    if(dst.iveImg.enType!=IVE_IMAGE_TYPE_S8C1&&dst.iveImg.enType!=IVE_IMAGE_TYPE_U8C1){
+    if (dst.iveImg.enType != IVE_IMAGE_TYPE_S8C1 && dst.iveImg.enType != IVE_IMAGE_TYPE_U8C1)
+    {
         errorCode("iveThreshS16 input image format error\n input src must be IVE_IMAGE_TYPE_U8C1/S8C1", 0);
         return;
     }
-    if(src.iveImg.u32Width<64||src.iveImg.u32Height<64||src.iveImg.u32Width>1920||src.iveImg.u32Height>1080){
-        printf("src 图像尺寸 不合格 w h  : %d %d ",src.iveImg.u32Width,src.iveImg.u32Height);
+    if (src.iveImg.u32Width < 64 || src.iveImg.u32Height < 64 || src.iveImg.u32Width > 1920 || src.iveImg.u32Height > 1080)
+    {
+        printf("src 图像尺寸 不合格 w h  : %d %d ", src.iveImg.u32Width, src.iveImg.u32Height);
     }
-    if(dst.iveImg.u32Width<64||dst.iveImg.u32Height<64||dst.iveImg.u32Width>1920||dst.iveImg.u32Height>1080){
+    if (dst.iveImg.u32Width < 64 || dst.iveImg.u32Height < 64 || dst.iveImg.u32Width > 1920 || dst.iveImg.u32Height > 1080)
+    {
         printf("dst 图像尺寸 不合格");
     }
-    if(dst.iveImg.u32Width!=src.iveImg.u32Width||dst.iveImg.u32Height!=src.iveImg.u32Height){
+    if (dst.iveImg.u32Width != src.iveImg.u32Width || dst.iveImg.u32Height != src.iveImg.u32Height)
+    {
         printf("srt dst 分辨率不一致");
     }
 
@@ -459,6 +463,11 @@ bool iveCSC(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
             CHECK_STRIDE(hidst.iveImg.au32Stride[1], 16, false);
             CHECK_STRIDE(hidst.iveImg.au32Stride[2], 16, false);
         }
+        if (hisrc.iveImg.u32Height != hidst.iveImg.u32Height ||
+            hisrc.iveImg.u32Width != hidst.iveImg.u32Width)
+        {
+            printf("error: input size != output size");
+        }
         IVE_IMAGE_S ivesrc = hisrc.getIVEImage();
         IVE_IMAGE_S ivedst = hidst.getIVEImage();
         IVE_HANDLE cschandle;
@@ -466,15 +475,17 @@ bool iveCSC(const hisiImage &hisrc, hisiImage &hidst, int mode, int needBlock)
         CHECK_IVE_FUNCTION_RET("HI_MPI_IVE_CSC", s32ret, false);
         BLOCK_IVE_FUNCTION_RET(needBlock, cschandle, false);
     }
-        break;
+    break;
     case IVE_CSC_MODE_PIC_BT709_RGB2YUV:
+    {
         IVE_IMAGE_S ivesrc = hisrc.getIVEImage();
         IVE_IMAGE_S ivedst = hidst.getIVEImage();
         IVE_HANDLE cschandle;
         int s32ret = HI_MPI_IVE_CSC(&cschandle, &ivesrc, &ivedst, &cscCtrl, (HI_BOOL)needBlock);
         CHECK_IVE_FUNCTION_RET("HI_MPI_IVE_CSC", s32ret, false);
         BLOCK_IVE_FUNCTION_RET(needBlock, cschandle, false);
-        break;
+    }
+    break;
     default:
         printf("待完善的函数\n");
         break;
