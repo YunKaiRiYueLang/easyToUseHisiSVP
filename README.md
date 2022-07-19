@@ -1,7 +1,7 @@
 # easyToUseHisiSVP
 
-海思的SVP包含IVE IVS NNIE等多个部分. 目前整理的内容以IVE模块为主,觉得有用请Star或直接参与改进。
-
+海思的SVP包含IVE IVS NNIE等多个部分. 目前整理的内容以IVE模块为主,觉得有用请Star参与改进。
+项目相关的芯片有3519av100、3516av300、3516av100、SS928V100.
 ## 使用简要说明
 1. 海思ive函数耗时记录，在 [**耗时数据.md**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/blob/main/%E8%80%97%E6%97%B6%E6%95%B0%E6%8D%AE.md) 里。
 2. ~~测试用的代码，在[**testcode**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/tree/main/testcode/ive%E6%97%B6%E9%97%B4%E6%B5%8B%E8%AF%95)文件夹里。~~
