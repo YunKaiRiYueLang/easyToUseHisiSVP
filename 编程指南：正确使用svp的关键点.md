@@ -41,3 +41,11 @@
 
 #### 1. nnie和cpu协同
     同ive。ive nnie的算力有独立的硬件，只有内存是能跟cpu共用的。
+
+### 三 杂项
+
+#### 1. 海思mpp其他图像处理模块
+    VPSS（Video Process Sub-System，视频处理子系统），支持对一幅图像进行预处理。
+    VGS （Video Graphics Sub-System，视频图形子系统），支持对一幅图像进行预处理。
+    FISHEYE(鱼眼子系统)，支持对一幅图像做鱼眼矫正
+    视频侦测分析（VDA），作用如其名
