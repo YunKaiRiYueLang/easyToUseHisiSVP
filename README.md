@@ -8,7 +8,7 @@
 2. ~~测试用的代码，在[**testcode**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/tree/main/testcode/ive%E6%97%B6%E9%97%B4%E6%B5%8B%E8%AF%95)文件夹里。~~
 3. 对ive图像格式的封装，仅支持8bit单通道类型，[**封装代码**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/tree/main/%E5%AF%B9ive%E5%9B%BE%E5%83%8F%E6%A0%BC%E5%BC%8F%E7%9A%84%E5%B0%81%E8%A3%85)。
 
-4. 编程指南：[**正确使用svp的关键点.md**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/blob/main/%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97%EF%BC%9A%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8svp%E7%9A%84%E5%85%B3%E9%94%AE%E7%82%B9.md) 目前写了ive使用注意事项
+4. 编程指南：[**正确使用svp的关键点.md**](https://github.com/YunKaiRiYueLang/easyToUseHisiSVP/blob/main/%E7%BC%96%E7%A8%8B%E6%8C%87%E5%8D%97%EF%BC%9A%E6%AD%A3%E7%A1%AE%E4%BD%BF%E7%94%A8svp%E7%9A%84%E5%85%B3%E9%94%AE%E7%82%B9.md) 目前写了ive nnie 等模块和mpp相关的注意事项
 5. test文件夹包含一些测试的代码和程序。将分别存放。帮助确认和排除一些问题。
 ## 编译
 
