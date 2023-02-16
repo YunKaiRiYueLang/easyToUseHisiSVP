@@ -67,6 +67,7 @@
   - [x] iveInteg 
   - [x] ive16BitTo8Bit
 - [ ] 完善智能指针，进一步优化内存管理
+- [ ] SS928V100上的ive相关的代码
 
 代码会陆续整合。欢迎Star。
 
