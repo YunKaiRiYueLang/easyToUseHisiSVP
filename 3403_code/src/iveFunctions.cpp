@@ -109,6 +109,7 @@ bool yuv2rgbIve(ot_video_frame_info *frame_info, void *rgb)
     }
     return true;
 }
+#ifdef __HISIIMAGE_H__
 /**
  * @brief
  *
@@ -195,7 +196,7 @@ bool iveCanny(hisiImage &src, hisiImage &dst, signed char mask[25], int high_th 
     ss_mpi_sys_mmz_free((td_phys_addr_t)(ctrl.mem.phys_addr), (td_void *)(td_uintptr_t)(ctrl.mem.virt_addr));
     ss_mpi_sys_mmz_free((td_phys_addr_t)(stack.phys_addr), (td_void *)(td_uintptr_t)(stack.virt_addr));
 }
-
+#endif
 // note:
 // #define STB_IMAGE_WRITE_IMPLEMENTATION
 // #include "stb_image_write.h"
